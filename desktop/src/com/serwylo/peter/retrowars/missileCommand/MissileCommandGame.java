@@ -4,13 +4,20 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.serwylo.peter.retrowars.Game;
 
 public class MissileCommandGame extends Game 
 {
 
+	public static final int TIME_BETWEEN_ATTACKS = 2000;
+	
+	private long lastFire;
+	
 	private ArrayList<City> cities = new ArrayList<City>();
 	private ArrayList<Tower> towers = new ArrayList<Tower>();
+	private ArrayList<Missile> missiles = new ArrayList<Missile>();
 	
 	@Override
 	public void create()
@@ -29,11 +36,34 @@ public class MissileCommandGame extends Game
 			this.stage.addActor( tower );
 			this.towers.add( tower );
 		}
+		
+		this.lastFire = System.currentTimeMillis();
 	}
 	
 	public void update()
 	{
-		this.stage.act( Gdx.graphics.getDeltaTime() );
+		float delta = Gdx.graphics.getDeltaTime();
+		this.stage.act( delta );
+		
+		if ( System.currentTimeMillis() - this.lastFire > TIME_BETWEEN_ATTACKS )
+		{
+			this.fireMissile();
+		}
+		
+		for ( Missile missile : this.missiles )
+		{
+			missile.update( delta );
+		}
+	}
+	
+	private void fireMissile()
+	{
+		int startX = (int)( Math.random() * Gdx.graphics.getWidth() );
+		int cityIndex = (int)( Math.random() * this.cities.size() );
+		int targetX = this.cities.get( cityIndex ).getX();
+		Missile missile = new Missile( new Vector2( startX, Gdx.graphics.getHeight() ), new Vector2( targetX, 0 ) );
+		this.missiles.add( missile );
+		this.lastFire = System.currentTimeMillis();
 	}
 	
 	public void render()
@@ -44,20 +74,29 @@ public class MissileCommandGame extends Game
 		Gdx.gl.glClear( GL10.GL_COLOR_BUFFER_BIT );
 		
 		this.stage.draw();
+		
+		SpriteBatch batch = new SpriteBatch();
+		batch.begin();
+		for ( Missile missile : this.missiles )
+		{
+			missile.render( batch );
+		}
+		batch.end();
 	}
 	
 	/**
-	 * Place the cities appropriately.
+	 * at appropriately even spaces.
+	 * 
+	 * Place two towers (@) and four cities (#) appropriately
+	 * Here is a mock-up of what it should look like:
+	 *  
+	 *  |--@--#--#--@--#--#--@--|
+	 * 
 	 */
 	@Override
 	public void resize( int width, int height )
 	{
 		super.resize( width, height );
-
-		// Create three towers (@) and four cities (#) and place them appropriately
-		// Here is a mock-up of what it should look like:
-		// 
-		// |--@--#--#--@--#--#--@--|
 		
 		int spacing = width / 8;
 		

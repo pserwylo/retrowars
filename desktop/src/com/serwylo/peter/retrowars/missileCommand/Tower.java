@@ -11,7 +11,11 @@ public class Tower extends Actor
 
 	private static Sprite towerSprite;
 	
-	private int x;
+	private Vector2 position;
+	
+	private long timeSinceLastFire = 0;
+	
+	public static final int RELOAD_TIME = 1000;
 	
 	/**
 	 * @param x The x coordinate of the screen where the tower is to be placed (the y
@@ -19,7 +23,7 @@ public class Tower extends Actor
 	 */
 	public Tower( int x )
 	{
-		this.x = x;
+		this.position = new Vector2( x, 10 );
 		if ( towerSprite == null )
 		{
 			towerSprite = SpriteManager.getTowerSprite();
@@ -27,27 +31,35 @@ public class Tower extends Actor
 	}
 	
 	/**
-	 * The current X location of this tower.
+	 * Check if we have waited long enough since last time we fired.
 	 * @return
 	 */
-	public int getX()
+	public boolean readyToFire()
 	{
-		return x;
+		return ( System.currentTimeMillis() > this.timeSinceLastFire + RELOAD_TIME );
 	}
 	
 	/**
-	 * @see \getX()
+	 * 
+	 */
+	public void fire()
+	{
+		this.timeSinceLastFire = System.currentTimeMillis();
+	}
+	
+	/**
+	 * The current position of this tower.
 	 * @return
 	 */
-	public void setX( int value )
+	public Vector2 getPosition()
 	{
-		this.x = value;
+		return this.position;
 	}
 	
 	@Override
 	public void draw( SpriteBatch batch, float parentAlpha ) 
 	{
-		towerSprite.setPosition( this.x, 10 );
+		towerSprite.setPosition( this.position.x, this.position.y );
 		towerSprite.draw( batch );
 	}
 

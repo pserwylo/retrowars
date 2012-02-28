@@ -2,7 +2,9 @@ package com.serwylo.peter.retrowars;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class SpriteManager 
 {
@@ -23,12 +25,16 @@ public class SpriteManager
 		return bullet;
 	}
 
-	public static Sprite getCitySprite()
+	public static TextureRegion[] getCityStates()
 	{
-		Texture cityTexture = new Texture( Gdx.files.internal("assets/city.png" ) );
-		Sprite city = new Sprite( cityTexture, 0, 0, 32, 32 );
-		city.setOrigin( 16, 0 );
-		return city;
+		Texture cityTexture = new Texture( Gdx.files.internal("assets/city-stages.png" ) );
+		TextureRegion[] regions = {
+				new TextureRegion( cityTexture, 0, 0, 32, 32 ),
+				new TextureRegion( cityTexture, 32, 0, 32, 32 ),
+				new TextureRegion( cityTexture, 0, 32, 32, 32 ),
+				new TextureRegion( cityTexture, 32, 32, 32, 32 )
+		};
+		return regions;
 	}
 
 	public static Sprite getTowerSprite()

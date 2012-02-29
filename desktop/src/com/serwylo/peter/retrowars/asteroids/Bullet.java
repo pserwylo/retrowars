@@ -9,20 +9,20 @@ import com.serwylo.peter.retrowars.SpriteManager;
 public class Bullet 
 {
 	
-	public static final int SPEED = 200;
+	public static final int SPEED = 500;
 	
 	/**
 	 * Number of milliseconds the bullet is alive for. When it has been around for this long,
 	 * then it is marked as inactive and the Ship will remove it. As it approaches this,
 	 * then it will start to fade away so that it doesn't just disappear from the screen.
 	 */
-	public static int LIFE = 2000;
+	public static int LIFE = 1250;
 	
 	/**
 	 * The amount of milliseconds before the bullet starts to fade away (should be smaller
-	 * than \LIFE).
+	 * than {@link LIFE}.
 	 */
-	public static int FADE_AFTER = 1500;
+	public static int FADE_AFTER = 1000;
 	
 	private static Sprite bulletSprite;
 	
@@ -30,15 +30,17 @@ public class Bullet
 	
 	private Vector2 position, velocity;
 	
-	public Bullet( Vector2 position, Vector2 velocity, Vector2 orientation )
+	public Bullet( Vector2 position, Vector2 shipVelocity, Vector2 orientation )
 	{
-		this.position = position;
+		this.position = position.cpy();
 		
-		orientation.nor();
-		orientation.x *= SPEED;
-		orientation.y *= SPEED;
+		// Convert the orientation into a velocity vector which will be added to the ships
+		// velocity (which was passed into this constructor).
+		Vector2 bulletVelocity = orientation.cpy().nor();
+		bulletVelocity.x *= SPEED;
+		bulletVelocity.y *= SPEED;
 		
-		this.velocity = velocity.add( orientation );
+		this.velocity = shipVelocity.cpy().add( bulletVelocity );
 		
 		if ( bulletSprite == null )
 		{
@@ -52,14 +54,14 @@ public class Bullet
 	 * Updates the position of the bullet, and marks it as ready to remove if
 	 * it has lived for a certain period of time...
 	 * @param delta
-	 * @return If the bullet has been around longer than \LIFE, then it will 
+	 * @return If the bullet has been around longer than {@link LIFE}, then it will 
 	 * return false.
 	 */
 	public boolean update( float delta )
 	{
 		this.position.x += this.velocity.x * delta;
 		this.position.y += this.velocity.y * delta;
-		GraphicsUtils.wrapScreen( this.position );
+		GraphicsUtils.wrapVectorAroundScreen( this.position );
 		
 		return ( System.currentTimeMillis() < this.birthTime + LIFE );
 	}

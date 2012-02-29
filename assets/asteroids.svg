@@ -25,16 +25,18 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="229.8097"
-     inkscape:cy="872.56977"
+     inkscape:cx="370.33252"
+     inkscape:cy="828.96195"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer3"
      showgrid="false"
      inkscape:window-width="1366"
      inkscape:window-height="721"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     showguides="true"
+     inkscape:guide-bbox="true" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -61,11 +63,313 @@
        y="-28.637817" />
   </g>
   <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Grid"
+     style="display:none">
+    <g
+       id="g4116"
+       transform="matrix(-1,0,0,-1,976.36458,446.38529)"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93">
+      <rect
+         y="95.925873"
+         x="360.24139"
+         height="127.87261"
+         width="127.87097"
+         id="rect2994-5"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.1028266;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         transform="matrix(1.2053634,0,0,1.2300726,-52.270369,-19.110603)"
+         d="m 448.30571,145.49774 a 53.033009,51.972347 0 1 1 -106.06601,0 53.033009,51.972347 0 1 1 106.06601,0 z"
+         sodipodi:ry="51.972347"
+         sodipodi:rx="53.033009"
+         sodipodi:cy="145.49774"
+         sodipodi:cx="395.27271"
+         id="path3819"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
+    <g
+       id="g4100"
+       transform="matrix(-1,0,0,-1,978.67932,448.90279)"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93">
+      <rect
+         y="226.46324"
+         x="490.58322"
+         height="63.875145"
+         width="63.875244"
+         id="rect2994"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.09980499;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         transform="matrix(0.60280837,0,0,0.61493929,284.24715,168.92854)"
+         d="m 448.30571,145.49774 a 53.033009,51.972347 0 1 1 -106.06601,0 53.033009,51.972347 0 1 1 106.06601,0 z"
+         sodipodi:ry="51.972347"
+         sodipodi:rx="53.033009"
+         sodipodi:cy="145.49774"
+         sodipodi:cx="395.27271"
+         id="path3819-0"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
+    <g
+       id="g4104"
+       transform="matrix(-1,0,0,-1,983.596,448.36415)"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93">
+      <rect
+         y="225.92461"
+         x="559.56238"
+         height="63.875145"
+         width="63.875244"
+         id="rect2994-9"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.09980499;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         transform="matrix(0.60280837,0,0,0.61493929,353.22631,168.3899)"
+         d="m 448.30571,145.49774 a 53.033009,51.972347 0 1 1 -106.06601,0 53.033009,51.972347 0 1 1 106.06601,0 z"
+         sodipodi:ry="51.972347"
+         sodipodi:rx="53.033009"
+         sodipodi:cy="145.49774"
+         sodipodi:cx="395.27271"
+         id="path3819-0-0"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
+    <g
+       id="g4096"
+       transform="matrix(-1,0,0,-1,978.88922,449.29563)"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93">
+      <rect
+         y="290.90076"
+         x="490.79312"
+         height="63.875145"
+         width="63.875244"
+         id="rect2994-9-4"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.09980499;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         transform="matrix(0.60280837,0,0,0.61493929,284.45705,233.36606)"
+         d="m 448.30571,145.49774 a 53.033009,51.972347 0 1 1 -106.06601,0 53.033009,51.972347 0 1 1 106.06601,0 z"
+         sodipodi:ry="51.972347"
+         sodipodi:rx="53.033009"
+         sodipodi:cy="145.49774"
+         sodipodi:cx="395.27271"
+         id="path3819-0-0-8"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
+    <g
+       id="g4084"
+       transform="matrix(-1,0,0,-1,984.87754,450.96748)"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93">
+      <rect
+         y="292.55319"
+         x="560.81281"
+         height="31.923004"
+         width="31.937605"
+         id="rect2994-8"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.0498911;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         transform="matrix(0.30111003,0,0,0.30716963,457.76103,263.82219)"
+         d="m 448.30571,145.49774 a 53.033009,51.972347 0 1 1 -106.06601,0 53.033009,51.972347 0 1 1 106.06601,0 z"
+         sodipodi:ry="51.972347"
+         sodipodi:rx="53.033009"
+         sodipodi:cy="145.49774"
+         sodipodi:cx="395.27271"
+         id="path3819-0-0-2"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
+    <g
+       id="g4088"
+       transform="matrix(-1,0,0,-1,987.03332,450.81497)"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93">
+      <rect
+         y="292.40067"
+         x="595.03119"
+         height="31.923004"
+         width="31.937605"
+         id="rect2994-8-7"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.0498911;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         transform="matrix(0.30111003,0,0,0.30716963,491.97942,263.66968)"
+         d="m 448.30571,145.49774 a 53.033009,51.972347 0 1 1 -106.06601,0 53.033009,51.972347 0 1 1 106.06601,0 z"
+         sodipodi:ry="51.972347"
+         sodipodi:rx="53.033009"
+         sodipodi:cy="145.49774"
+         sodipodi:cx="395.27271"
+         id="path3819-0-0-2-7"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
+    <g
+       id="g4092"
+       transform="matrix(-1,0,0,-1,983.59592,451.76132)"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93">
+      <rect
+         y="325.40067"
+         x="559.53119"
+         height="31.923004"
+         width="31.937605"
+         id="rect2994-8-7-6"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.0498911;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         transform="matrix(0.30111003,0,0,0.30716963,456.47942,296.66968)"
+         d="m 448.30571,145.49774 a 53.033009,51.972347 0 1 1 -106.06601,0 53.033009,51.972347 0 1 1 106.06601,0 z"
+         sodipodi:ry="51.972347"
+         sodipodi:rx="53.033009"
+         sodipodi:cy="145.49774"
+         sodipodi:cx="395.27271"
+         id="path3819-0-0-2-7-4"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
+    <g
+       id="g4111"
+       transform="matrix(-1,0,0,-1,978.44173,444.88529)"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93">
+      <rect
+         y="94.425873"
+         x="490.31451"
+         height="127.87261"
+         width="127.87097"
+         id="rect2994-5-9"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.1028266;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <g
+         transform="translate(-2.7201661e-6,-3.6235961e-6)"
+         id="g4108">
+        <path
+           sodipodi:type="arc"
+           style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+           id="path3819-1"
+           sodipodi:cx="395.27271"
+           sodipodi:cy="145.49774"
+           sodipodi:rx="53.033009"
+           sodipodi:ry="51.972347"
+           d="m 448.30571,145.49774 a 53.033009,51.972347 0 1 1 -106.06601,0 53.033009,51.972347 0 1 1 106.06601,0 z"
+           transform="matrix(1.2053634,0,0,1.2300726,77.802751,-20.610603)" />
+      </g>
+    </g>
+    <g
+       id="g4120"
+       transform="matrix(-1,0,0,-1,976.1877,448.38768)"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93">
+      <rect
+         y="225.92587"
+         x="360.06451"
+         height="127.87261"
+         width="127.87097"
+         id="rect2994-5-9-8"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.1028266;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         transform="matrix(1.2053634,0,0,1.2300726,-52.447262,110.8894)"
+         d="m 448.30571,145.49774 a 53.033009,51.972347 0 1 1 -106.06601,0 53.033009,51.972347 0 1 1 106.06601,0 z"
+         sodipodi:ry="51.972347"
+         sodipodi:rx="53.033009"
+         sodipodi:cy="145.49774"
+         sodipodi:cx="395.27271"
+         id="path3819-1-2"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
+    <g
+       style="display:inline"
+       id="g4084-0"
+       transform="matrix(-0.49902364,0,0,-0.4991631,671.86098,272.39381)"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93">
+      <rect
+         y="292.55319"
+         x="560.81281"
+         height="31.923004"
+         width="31.937605"
+         id="rect2994-8-9"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.0498911;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         transform="matrix(0.30111003,0,0,0.30716963,457.76103,263.82219)"
+         d="m 448.30571,145.49774 a 53.033009,51.972347 0 1 1 -106.06601,0 53.033009,51.972347 0 1 1 106.06601,0 z"
+         sodipodi:ry="51.972347"
+         sodipodi:rx="53.033009"
+         sodipodi:cy="145.49774"
+         sodipodi:cx="395.27271"
+         id="path3819-0-0-2-2"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
+    <g
+       style="display:inline"
+       id="g4088-8"
+       transform="matrix(-0.49902364,0,0,-0.4991631,672.93676,272.31769)"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93">
+      <rect
+         y="292.40067"
+         x="595.03119"
+         height="31.923004"
+         width="31.937605"
+         id="rect2994-8-7-0"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.0498911;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         transform="matrix(0.30111003,0,0,0.30716963,491.97942,263.66968)"
+         d="m 448.30571,145.49774 a 53.033009,51.972347 0 1 1 -106.06601,0 53.033009,51.972347 0 1 1 106.06601,0 z"
+         sodipodi:ry="51.972347"
+         sodipodi:rx="53.033009"
+         sodipodi:cy="145.49774"
+         sodipodi:cx="395.27271"
+         id="path3819-0-0-2-7-0"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
+    <g
+       style="display:inline"
+       id="g4092-3"
+       transform="matrix(-0.49902364,0,0,-0.4991631,671.22142,272.79007)"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93">
+      <rect
+         y="325.40067"
+         x="559.53119"
+         height="31.923004"
+         width="31.937605"
+         id="rect2994-8-7-6-1"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.0498911;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         transform="matrix(0.30111003,0,0,0.30716963,456.47942,296.66968)"
+         d="m 448.30571,145.49774 a 53.033009,51.972347 0 1 1 -106.06601,0 53.033009,51.972347 0 1 1 106.06601,0 z"
+         sodipodi:ry="51.972347"
+         sodipodi:rx="53.033009"
+         sodipodi:cy="145.49774"
+         sodipodi:cx="395.27271"
+         id="path3819-0-0-2-7-4-1"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
+  </g>
+  <g
      inkscape:label="Asteroids"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     style="display:inline">
     <path
-       style="fill:#000000;stroke:#ffffff;stroke-width:3;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       style="fill:#000000;stroke:#ffffff;stroke-width:3;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 225.88958,199.67119 5.89059,-27.29299 1.59196,-0.19563 5.37234,27.61179 z"
        id="path2985"
        inkscape:connector-curvature="0"
@@ -78,5 +382,101 @@
        d="m 230.90712,166.30626 -1.69599,-2.39751 1.80906,-2.90225 2.71359,0.88329 0.45226,2.64988 -1.35679,1.6404 z"
        id="path3799"
        inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:1.42751968;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 420.80652,134.11997 2.60695,8.59851 -1.65898,9.31505 -7.34687,3.34387 -6.16189,2.38847 -6.87288,-2.86616 -5.68791,-2.38848 -2.84395,-10.5093 2.36996,-9.5539 8.29486,-4.29925 4.73992,-0.95539 7.34687,1.43309 z"
+       id="path4210"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:1.42751968;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 388.98091,137.46383 2.36996,6.44889 -2.13297,9.31505 -6.16189,1.19424 -7.34687,3.34386 -11.61281,-3.58271 -3.31794,-10.98699 3.31794,-12.18122 9.47984,-2.38847 2.84395,-1.43309 9.95384,1.91078 z"
+       id="path4212"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:1.43821275;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 418.15532,99.476683 4.29776,5.775457 0.95505,8.18189 -5.01404,7.21932 -4.05899,4.33159 -10.50561,0.72193 -8.35674,-5.29417 -1.19382,-8.42253 -1.43258,-2.40645 1.9101,-9.625757 6.6854,-2.88772 6.20787,-1.92515 z"
+       id="path4214"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:2.00006318;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 482.72568,181.19911 4.464,9.57722 -3.96799,20.66665 -14.87999,4.53659 -13.88799,5.5447 -22.31997,-7.56096 -6.944,-18.65039 1.488,-24.69916 7.44,-5.04066 3.96799,-5.5447 18.84798,-0.50407 21.82398,6.55284 z"
+       id="path3911"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:1.93208969;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 418.83088,180.34128 4.33031,13.57736 -5.77375,17.94151 -13.95325,4.84905 -11.06637,4.84906 -21.17046,-8.72831 -7.21719,-12.12263 -2.88688,-9.69811 6.2549,-23.76038 24.53847,-7.75848 22.6139,10.66791 z"
+       id="path3913"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:1.99199998;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 482.2723,103.54185 4.92124,21.67747 -2.95275,21.67746 -15.74797,10.58667 -29.52744,-1.00825 -13.77948,-26.71874 6.39761,-26.71875 26.08258,-7.561897 z"
+       id="path3915"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:2.97683573;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 607.31401,316.02739 -8.8599,12.00222 -19.68869,18.50343 -31.00968,2.50046 -28.05638,-5.00092 -24.11865,-31.50584 -3.44552,-25.50473 -2.46108,-11.50213 8.85991,-28.00519 25.59529,-18.50343 27.07195,-5.00092 42.82289,6.00111 12.79765,31.50584 7.87547,18.00333 z"
+       id="path3849"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:2.94252872;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 485.24718,270.09281 1.47127,34.81992 -22.55939,34.32949 -40.70498,9.80844 -46.59004,-12.75097 -3.43296,-23.0498 -11.77011,-25.99234 12.26054,-43.15709 30.40613,-18.14559 20.5977,-1.96169 42.66667,13.7318 z"
+       id="path4080"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:2.99429774;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 501.54109,196.32846 31.1279,21.17032 19.76375,3.52838 28.65743,-4.03244 21.74012,-27.21898 9.38778,-11.08922 2.47047,-25.70681 -8.89369,-35.28387 -24.21059,-13.10544 -17.29327,-7.056767 -35.57475,-1.51217 -21.24603,20.666267 -16.30509,23.69059 -1.48228,33.77171 z"
+       id="path4082"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:0.94814795px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 361.30571,116.29071 1.06667,-3.79259 2.72593,-0.71111 3.19999,-0.94815 3.91111,0.35555 2.4889,4.26667 0.82963,5.92593 -3.7926,3.31852 -2.72592,1.18518 -5.57037,-1.06667 -2.13334,-3.43703 -0.82963,-2.37037 z"
+       id="path4292"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:0.96240598px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 376.48321,103.38593 0.6015,-4.932336 2.04511,-1.443609 3.00752,-2.165413 3.72932,0.120301 4.81203,1.323308 0.7218,4.932339 0.1203,5.17293 -4.57142,2.64661 -2.40602,0.8421 -6.25564,-1.5639 z"
+       id="path4294"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:0.99275678px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 390.60777,122.26524 -4.23281,3.36163 -4.74588,0.24012 -3.33494,-3.00145 -1.66747,-0.84041 -0.12828,-7.32353 3.33495,-3.84186 5.64375,0.24012 4.74589,1.08052 1.28267,4.32209 z"
+       id="path4296"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/pete/code/retrowars/github/retrowars-gdx/assets/asteroids.png"
+       inkscape:export-xdpi="89.93"
+       inkscape:export-ydpi="89.93" />
   </g>
 </svg>

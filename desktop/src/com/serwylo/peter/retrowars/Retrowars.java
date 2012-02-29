@@ -15,7 +15,7 @@ public class Retrowars implements ApplicationListener
 	@Override
 	public void create() 
 	{
-		this.game = new MissileCommandGame();
+		this.game = new AsteroidsGame();
 		this.game.create();
 	}
 

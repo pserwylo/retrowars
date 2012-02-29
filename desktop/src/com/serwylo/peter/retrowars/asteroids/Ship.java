@@ -25,6 +25,18 @@ public class Ship extends Actor
 	private static final int KEY_SHOOT = Input.Keys.SPACE;
 
 	/**
+	 * The number of milliseconds it takes to reload, before we can fire another bullet.
+	 * Used in conjunction with {@link lastFireTime} to keep track of how often we fire.
+	 */
+	private static final int TIME_BETWEEN_SHOTS = 200;
+	
+	/**
+	 * The time when we last fired a bullet.
+	 * Used in conjunction with {@link TIME_BETWEEN_SHOTS} to keep track of how often we fire. 
+	 */
+	private long lastFireTime = 0;
+	
+	/**
 	 * Maximum velocity the speed can take. 
 	 * I am unsure of the units yet, right now its just pixels...
 	 */
@@ -66,17 +78,25 @@ public class Ship extends Actor
 		return this.position;
 	}
 	
+	/**
+	 * Moves the ship according to its velocity.
+	 * Checks input to decide if we need to fire or not.
+	 * Will also tell its bullets to update themselves (because they are not part of
+	 * the scene graph and need to be updated manually).
+	 */
 	@Override
 	public void act( float delta )
 	{
 		this.position.add( this.velocity );
-		GraphicsUtils.wrapScreen( this.position );
+		GraphicsUtils.wrapVectorAroundScreen( this.position );
 		
-		for ( Bullet bullet : this.bullets )
+		Iterator<Bullet> it = this.bullets.iterator();
+		while( it.hasNext() )
 		{
+			Bullet bullet = it.next();
 			if ( !bullet.update( delta ) )
 			{
-				// bullets.remove( bullet );	
+				it.remove();	
 			}
 		}
 		
@@ -102,7 +122,7 @@ public class Ship extends Actor
 			this.orientation.rotate( -ROTATE_SPEED * delta );
 		}
 		
-		if ( input.isKeyPressed( KEY_SHOOT ) )
+		if ( input.isKeyPressed( KEY_SHOOT ) && this.lastFireTime + TIME_BETWEEN_SHOTS < System.currentTimeMillis() )
 		{
 			this.fire();
 		}
@@ -115,19 +135,19 @@ public class Ship extends Actor
 	private void fire()
 	{
 		Bullet bullet = new Bullet( 
-			new Vector2( this.position ), 
-			new Vector2( this.velocity ), 
-			new Vector2( this.orientation ) 
+			new Vector2( this.position.x + this.shipSprite.getWidth() / 2, this.position.y + this.shipSprite.getHeight() / 2 ), 
+			this.velocity, 
+			this.orientation 
 		);
 		this.bullets.add( bullet );
+		this.lastFireTime = System.currentTimeMillis();
 	}
 	
 	@Override
 	public void draw( SpriteBatch batch, float parentAlpha ) 
 	{
 		this.shipSprite.setRotation( this.orientation.angle() - 90 );
-		this.shipSprite.setPosition( this.position.x, this.position.y );
-		this.shipSprite.draw( batch );
+		GraphicsUtils.drawSpriteWithScreenWrap( this.shipSprite, this.position, batch );
 
 		for ( Bullet bullet : this.bullets )
 		{

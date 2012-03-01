@@ -135,7 +135,7 @@ public class Ship extends Actor
 	private void fire()
 	{
 		Bullet bullet = new Bullet( 
-			new Vector2( this.position.x + this.shipSprite.getWidth() / 2, this.position.y + this.shipSprite.getHeight() / 2 ), 
+			new Vector2( this.position.x, this.position.y ), 
 			this.velocity, 
 			this.orientation 
 		);

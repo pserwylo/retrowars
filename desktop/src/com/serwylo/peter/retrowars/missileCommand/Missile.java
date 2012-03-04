@@ -2,10 +2,13 @@ package com.serwylo.peter.retrowars.missileCommand;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.serwylo.peter.retrowars.SpriteManager;
+import com.serwylo.peter.retrowars.asteroids.AsteroidsGame;
+import com.serwylo.peter.retrowars.collisions.ICollidable;
 
-public class Missile 
+public class Missile implements ICollidable
 {
 	
 	public static final int SPEED = 50;
@@ -15,6 +18,8 @@ public class Missile
 	private Vector2 position, velocity;
 	
 	private City target;
+	
+	private Rectangle boundingRect;
 	
 	public Missile( Vector2 start, City target )
 	{
@@ -31,6 +36,15 @@ public class Missile
 		{
 			bulletSprite = SpriteManager.getBulletSprite();
 		}
+
+		this.boundingRect = new Rectangle(
+			this.position.x,
+			this.position.y,
+			bulletSprite.getWidth(),
+			bulletSprite.getHeight()
+		);
+
+		MissileCommandGame.getQuadTree().insert( this );
 	}
 	
 	/**
@@ -51,13 +65,32 @@ public class Missile
 	{
 		this.position.x += this.velocity.x * delta;
 		this.position.y += this.velocity.y * delta;
-		return ( this.position.y > this.target.getPosition().y );
+
+		this.boundingRect.x = this.position.x;
+		this.boundingRect.x = this.position.y;
+
+		MissileCommandGame.getQuadTree().update( this );
+				
+		boolean keep = ( this.position.y > this.target.getPosition().y );
+
+		if ( !keep )
+		{
+			MissileCommandGame.getQuadTree().remove( this );
+		}
+		
+		return keep;
 	}
 	
 	public void render( SpriteBatch batch )
 	{
 		bulletSprite.setPosition( this.position.x, this.position.y );
 		bulletSprite.draw( batch );
+	}
+
+	@Override
+	public Rectangle getBoundingRect() 
+	{
+		return this.boundingRect;
 	}
 	
 }

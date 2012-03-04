@@ -228,6 +228,8 @@ public class MissileCommandGame extends Game
 		}
 		
 		batch.end();
+		
+		MissileCommandGame.getQuadTree().draw( this.stage.getCamera() );
 	}
 	
 	/**

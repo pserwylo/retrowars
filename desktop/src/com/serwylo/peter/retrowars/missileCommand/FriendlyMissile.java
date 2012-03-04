@@ -2,8 +2,10 @@ package com.serwylo.peter.retrowars.missileCommand;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.serwylo.peter.retrowars.SpriteManager;
+import com.serwylo.peter.retrowars.collisions.ICollidable;
 
 /**
  * Keeps traveling until it hits {@link target}, when it then tells the game that it has
@@ -14,7 +16,7 @@ import com.serwylo.peter.retrowars.SpriteManager;
  * @author pete
  *
  */
-public class FriendlyMissile 
+public class FriendlyMissile implements ICollidable
 {
 	
 	public static final int SPEED = 150;
@@ -24,6 +26,8 @@ public class FriendlyMissile
 	private Vector2 position, velocity, target;
 	
 	private float distanceToTargetSquared = Float.MAX_VALUE;
+	
+	private Rectangle boundingRect;
 	
 	public FriendlyMissile( Vector2 start, Vector2 target )
 	{
@@ -40,6 +44,14 @@ public class FriendlyMissile
 		{
 			bulletSprite = SpriteManager.getBulletSprite();
 		}
+		
+		this.boundingRect = new Rectangle(
+			this.position.x,
+			this.position.y,
+			bulletSprite.getWidth(),
+			bulletSprite.getHeight());
+		
+		MissileCommandGame.getQuadTree().insert( this );
 	}
 	
 	/**
@@ -50,6 +62,11 @@ public class FriendlyMissile
 	{
 		this.position.x += this.velocity.x * delta;
 		this.position.y += this.velocity.y * delta;
+	
+		this.boundingRect.x = this.position.x;
+		this.boundingRect.y = this.position.y;
+		
+		MissileCommandGame.getQuadTree().update( this );
 		
 		float distSquared = this.position.dst2( this.target );
 		if ( distSquared < this.distanceToTargetSquared )
@@ -61,6 +78,7 @@ public class FriendlyMissile
 		else
 		{
 			// Notify the game, so that it can replace me with an explosion.
+			MissileCommandGame.getQuadTree().remove( this );
 			return false;
 		}
 	}
@@ -69,6 +87,12 @@ public class FriendlyMissile
 	{
 		bulletSprite.setPosition( this.position.x, this.position.y );
 		bulletSprite.draw( batch );
+	}
+
+	@Override
+	public Rectangle getBoundingRect() 
+	{
+		return this.boundingRect;
 	}
 	
 }

@@ -40,7 +40,7 @@ public class Ship extends Actor
 	 * Maximum velocity the speed can take. 
 	 * I am unsure of the units yet, right now its just pixels...
 	 */
-	private static final int MAX_SPEED = 3;
+	private static final int MAX_SPEED = 5;
 	
 	/**
 	 * Acceleration of the ship. As with MAX_SPEED, the units it is in are currently

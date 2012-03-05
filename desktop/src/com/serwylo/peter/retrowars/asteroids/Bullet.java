@@ -2,11 +2,13 @@ package com.serwylo.peter.retrowars.asteroids;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.serwylo.peter.retrowars.GraphicsUtils;
 import com.serwylo.peter.retrowars.SpriteManager;
+import com.serwylo.peter.retrowars.collisions.ICollidable;
 
-public class Bullet 
+public class Bullet implements ICollidable
 {
 	
 	public static final int SPEED = 500;
@@ -30,6 +32,8 @@ public class Bullet
 	
 	private Vector2 position, velocity;
 	
+	private Rectangle boundingRect = new Rectangle();
+	
 	public Bullet( Vector2 position, Vector2 shipVelocity, Vector2 orientation )
 	{
 		this.position = position.cpy();
@@ -48,6 +52,18 @@ public class Bullet
 		}
 		
 		this.birthTime = System.currentTimeMillis();
+
+		this.boundingRect.width = bulletSprite.getWidth();
+		this.boundingRect.height = bulletSprite.getHeight();
+
+		AsteroidsGame.getQuadTree().insert( this );
+	}
+	
+	public Rectangle getBoundingRect()
+	{
+		this.boundingRect.x = this.position.x - bulletSprite.getWidth() / 2;
+		this.boundingRect.y = this.position.y - bulletSprite.getHeight() / 2;
+		return this.boundingRect;
 	}
 	
 	/**
@@ -62,8 +78,17 @@ public class Bullet
 		this.position.x += this.velocity.x * delta;
 		this.position.y += this.velocity.y * delta;
 		GraphicsUtils.wrapVectorAroundScreen( this.position );
+
+		AsteroidsGame.getQuadTree().update( this );
 		
-		return ( System.currentTimeMillis() < this.birthTime + LIFE );
+		boolean keep = ( ( System.currentTimeMillis() < this.birthTime + LIFE ) );
+		
+		if ( !keep )
+		{
+			AsteroidsGame.getQuadTree().remove( this );
+		}
+		
+		return keep;
 	}
 	
 	public void render( SpriteBatch batch )

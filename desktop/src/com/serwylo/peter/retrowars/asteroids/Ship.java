@@ -28,7 +28,7 @@ public class Ship extends Actor
 	 * The number of milliseconds it takes to reload, before we can fire another bullet.
 	 * Used in conjunction with {@link lastFireTime} to keep track of how often we fire.
 	 */
-	private static final int TIME_BETWEEN_SHOTS = 200;
+	private static final int TIME_BETWEEN_SHOTS = 50;
 	
 	/**
 	 * The time when we last fired a bullet.
@@ -105,7 +105,6 @@ public class Ship extends Actor
 		if ( this.isThrusting )
 		{
 			this.velocity.add( new Vector2( this.orientation ).mul( delta ) );
-			System.out.println( this.velocity.len() );
 			if ( this.velocity.len2() > MAX_SPEED * MAX_SPEED )
 			{
 				this.velocity = this.velocity.nor().mul( MAX_SPEED ); 

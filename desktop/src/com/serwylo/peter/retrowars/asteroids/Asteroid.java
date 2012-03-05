@@ -2,11 +2,13 @@ package com.serwylo.peter.retrowars.asteroids;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.serwylo.peter.retrowars.GraphicsUtils;
 import com.serwylo.peter.retrowars.SpriteManager;
+import com.serwylo.peter.retrowars.collisions.ICollidable;
 
-public class Asteroid 
+public class Asteroid implements ICollidable
 {
 
 	public static final int SPRITE_LARGE = 0;
@@ -28,6 +30,8 @@ public class Asteroid
 	private int size;
 	
 	private Sprite currentSprite;
+	
+	private Rectangle boundingRect;
 	
 	public static Asteroid createLarge( Vector2 position, Vector2 velocity )
 	{
@@ -80,8 +84,15 @@ public class Asteroid
 		
 		this.size = size;
 		int i = (int)( Math.random() * 3 ) + ( spriteIndex * 3 );
-		System.out.println( spriteIndex + " - " + i );
-		this.currentSprite = asteroidSprites[ i ]; 
+		this.currentSprite = asteroidSprites[ i ];
+
+		this.boundingRect = new Rectangle(
+			this.position.x - this.size / 2,
+			this.position.y - this.size / 2,
+			this.size,
+			this.size );
+		
+		AsteroidsGame.getQuadTree().insert( this );
 	}
 	
 	/**
@@ -102,6 +113,7 @@ public class Asteroid
 		this.position.x += this.velocity.x * delta;
 		this.position.y += this.velocity.y * delta;
 		GraphicsUtils.wrapVectorAroundScreen( this.position );
+		AsteroidsGame.getQuadTree().update( this );
 	}
 	
 	/**
@@ -113,6 +125,12 @@ public class Asteroid
 	{
 		GraphicsUtils.drawSpriteWithScreenWrap( this.currentSprite, this.position, batch );
 		
+	}
+
+	@Override
+	public Rectangle getBoundingRect() 
+	{
+		return this.boundingRect;
 	}
 	
 }

@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer10;
+import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.serwylo.peter.retrowars.Game;
 
@@ -75,16 +78,13 @@ public class AsteroidsGame extends Game
 			this.ship.getPosition().x = width / 2;
 			this.ship.getPosition().y = height / 2;
 
-			for ( int i = 0; i < 0; i ++ )
+			for ( int i = 0; i < 10; i ++ )
 			{
 				this.createAsteroid( Asteroid.SIZE_TINY );
 				this.createAsteroid( Asteroid.SIZE_SMALL );
 				this.createAsteroid( Asteroid.SIZE_MEDIUM );
 				this.createAsteroid( Asteroid.SIZE_LARGE );
 			}
-			
-			Asteroid a = new Asteroid( Asteroid.SIZE_LARGE, new Vector2( 300, 300 ), new Vector2( -30, -30 ) );
-			this.asteroids.add( a );
 			
 			startedFlag = true;
 		}
@@ -93,14 +93,15 @@ public class AsteroidsGame extends Game
 	public void update()
 	{
 		float delta = Gdx.graphics.getDeltaTime();
-		this.stage.act( delta );
-		
+
 		Iterator<Asteroid> it = this.asteroids.iterator();
 		while ( it.hasNext() )
 		{
 			Asteroid asteroid = it.next();
 			asteroid.update( delta );
 		}
+		
+		this.stage.act( delta );
 	}
 	
 	public void render()
@@ -121,6 +122,8 @@ public class AsteroidsGame extends Game
 			asteroid.render( batch );
 		}
 		batch.end();
+		
+		quadTree.draw( this.stage.getCamera() );
 	}
 	
 }

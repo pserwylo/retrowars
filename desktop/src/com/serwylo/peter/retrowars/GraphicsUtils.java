@@ -1,13 +1,37 @@
 package com.serwylo.peter.retrowars;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer10;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class GraphicsUtils 
 {
 
+	public static void drawDebugRect( Rectangle rect, Camera camera )
+	{
+    	ImmediateModeRenderer10 debug = new ImmediateModeRenderer10( 4 );
+    	debug.begin( camera.combined, GL10.GL_LINE_LOOP );
+	    
+	    	debug.color( 1.0f, 1.0f, 1.0f, 1.0f );
+    		debug.vertex( rect.x, rect.y, 0 );
+
+	    	debug.color( 1.0f, 1.0f, 1.0f, 1.0f );
+	    	debug.vertex( rect.x + rect.width, rect.y , 0 );
+
+	    	debug.color( 1.0f, 1.0f, 1.0f, 1.0f );
+	    	debug.vertex( rect.x + rect.width, rect.y + rect.height, 0 );
+
+	    	debug.color( 1.0f, 1.0f, 1.0f, 1.0f );
+	    	debug.vertex( rect.x, rect.y + rect.height, 0 );
+    	
+	    debug.end();
+	}
+	
 	/**
 	 * Given a vector, if it passes either end of the screen, then we will move it to the opposite
 	 * side. 

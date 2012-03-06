@@ -40,7 +40,7 @@ public abstract class Game implements ApplicationListener
 	public void resize( int width, int height ) 
 	{
 		this.stage.setViewport( width, height, true );
-		quadTree = new QuadTree<>( new Rectangle( 0, 0, width, height ) );
+		quadTree = new QuadTree<ICollidable>( new Rectangle( 0, 0, width, height ) );
 	}
 
 	@Override

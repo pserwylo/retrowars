@@ -67,11 +67,25 @@ public class QuadTree<T extends ICollidable>
 	
 	public void update( T item )
 	{
-		this.remove( item );
+		this.removeFromTree( item, false );
 		this.insert( item );
 	}
 	
-	public boolean remove( T item )
+	public void remove( T item )
+	{
+		this.removeFromTree( item, true );
+	}
+	
+	/**
+	 * Removes the specified {@link item} from the tree, and then if asked, will clean up any
+	 * empty branches which are left. That is, if, after removal, the siblings of the tree it was 
+	 * removed from have a combined total number of children which will fit in one node, then
+	 * the branch will be removed (the siblings will be joined back into one bigger quad).
+	 * @param item
+	 * @param cleanWhenDone TODO: Implement this feature. I'm not quite sure on how yet...
+	 * @return
+	 */
+	private boolean removeFromTree( T item, boolean cleanWhenDone )
 	{
 		if ( this.items.remove( item ) )
 		{
@@ -81,7 +95,7 @@ public class QuadTree<T extends ICollidable>
 		{
 			for ( QuadTree<T> node : this.childNodes )
 			{
-				if ( node.remove( item ) )
+				if ( node.removeFromTree( item, cleanWhenDone ) )
 				{
 					return true;
 				}

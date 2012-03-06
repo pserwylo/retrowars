@@ -1,10 +1,10 @@
-package com.serwylo.peter.retrowars.desktop;
+package com.serwylo.retrowars.desktop;
 
 import com.badlogic.gdx.backends.jogl.JoglApplication;
 import com.badlogic.gdx.backends.jogl.JoglApplicationConfiguration;
 import com.serwylo.peter.retrowars.Retrowars;
 
-public class RetrowarsDesktop 
+public class RetrowarsDesktop
 {
 
 	/**

@@ -123,7 +123,7 @@ public class AsteroidsGame extends Game
 		}
 		batch.end();
 		
-		quadTree.draw( this.stage.getCamera() );
+		// quadTree.draw( this.stage.getCamera() );
 	}
 	
 }

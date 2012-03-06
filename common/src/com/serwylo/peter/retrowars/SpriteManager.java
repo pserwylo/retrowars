@@ -11,7 +11,7 @@ public class SpriteManager
 
 	public static Sprite getShipSprite()
 	{
-		Texture shipTexture = new Texture( Gdx.files.internal("assets/ship.png" ) );
+		Texture shipTexture = new Texture( Gdx.files.internal("ship.png" ) );
 		Sprite ship = new Sprite( shipTexture, 0, 0, 16, 32 );
 		ship.setOrigin( 8, 16 );
 		return ship;
@@ -25,7 +25,7 @@ public class SpriteManager
 	 */
 	public static Sprite[] getAsteroidSprites()
 	{
-		Texture asteroidsTexture = new Texture( Gdx.files.internal("assets/asteroids.png" ) );
+		Texture asteroidsTexture = new Texture( Gdx.files.internal("asteroids.png" ) );
 		TextureRegion[] asteroidRegions = {
 				
 			// Large asteroids
@@ -62,7 +62,7 @@ public class SpriteManager
 
 	public static Sprite getBulletSprite()
 	{
-		Texture bulletTexture = new Texture( Gdx.files.internal("assets/bullet.png" ) );
+		Texture bulletTexture = new Texture( Gdx.files.internal("bullet.png" ) );
 		Sprite bullet = new Sprite( bulletTexture, 0, 0, 8, 8 );
 		bullet.setOrigin( 4, 4 );
 		return bullet;
@@ -70,7 +70,7 @@ public class SpriteManager
 
 	public static TextureRegion[] getCityStates()
 	{
-		Texture cityTexture = new Texture( Gdx.files.internal("assets/city-stages.png" ) );
+		Texture cityTexture = new Texture( Gdx.files.internal("city-stages.png" ) );
 		TextureRegion[] regions = {
 				new TextureRegion( cityTexture, 0, 0, 32, 32 ),
 				new TextureRegion( cityTexture, 32, 0, 32, 32 ),
@@ -82,7 +82,7 @@ public class SpriteManager
 
 	public static Sprite getTowerSprite()
 	{
-		Texture towerTexture = new Texture( Gdx.files.internal("assets/tower.png" ) );
+		Texture towerTexture = new Texture( Gdx.files.internal("tower.png" ) );
 		Sprite tower = new Sprite( towerTexture, 0, 0, 32, 16 );
 		tower.setOrigin( 16, 0 );
 		return tower;

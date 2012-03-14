@@ -8,14 +8,20 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.GameObject;
 import com.serwylo.peter.retrowars.GraphicsUtils;
 import com.serwylo.peter.retrowars.SpriteManager;
 
 /**
  * @author Peter Serwylo
  */
-public class Ship extends Actor
+public class Ship extends GameObject
 {
 
 	// Input keys for desktop version. The Android version will use a virtual d-pad.
@@ -55,27 +61,28 @@ public class Ship extends Actor
 	
 	private Sprite shipSprite;
 	
-	private Vector2 position, velocity, orientation;
-	
 	private boolean isThrusting = false;
 	
 	private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 	
+	private Body b2Body;
+	
 	public Ship()
 	{
 		this.shipSprite = SpriteManager.getShipSprite();
-		this.position = new Vector2( 0, 0 );
-		this.velocity = new Vector2( 0, 0 );
-		this.orientation = new Vector2( 0, ACCELERATION );
-	}
-	
-	/**
-	 * Current position of the ship.
-	 * @return
-	 */
-	public Vector2 getPosition()
-	{
-		return this.position;
+		
+		PolygonShape b2Shape = new PolygonShape();
+		b2Shape.setRadius( this.shipSprite.getHeight() / 2 );
+		
+		BodyDef b2BodyDef = new BodyDef();
+		b2BodyDef.type = BodyType.DynamicBody;
+		b2BodyDef.position.x = 0;
+		b2BodyDef.position.y = 0;
+		
+		this.b2Body = Game.getInstance().getWorld().createBody( b2BodyDef );
+		this.b2Body.createFixture( b2Shape, 1 );
+		
+		b2Shape.dispose();
 	}
 	
 	/**
@@ -85,7 +92,7 @@ public class Ship extends Actor
 	 * the scene graph and need to be updated manually).
 	 */
 	@Override
-	public void act( float delta )
+	public void update( float delta )
 	{
 		this.position.add( this.velocity );
 		GraphicsUtils.wrapVectorAroundScreen( this.position );
@@ -101,6 +108,7 @@ public class Ship extends Actor
 		}
 		
 		Input input = Gdx.app.getInput();
+		
 		this.isThrusting = ( input.isKeyPressed( KEY_ACCELERATE ) );
 		if ( this.isThrusting )
 		{
@@ -134,48 +142,25 @@ public class Ship extends Actor
 	private void fire()
 	{
 		Bullet bullet = new Bullet( 
-			new Vector2( this.position.x, this.position.y ), 
-			this.velocity, 
-			this.orientation 
+			this.b2Body.getPosition().cpy(), 
+			this.b2Body.getLinearVelocity(), 
+			this.b2Body.getAngle() 
 		);
 		this.bullets.add( bullet );
 		this.lastFireTime = System.currentTimeMillis();
 	}
-	
+
 	@Override
-	public void draw( SpriteBatch batch, float parentAlpha ) 
+	public void render( SpriteBatch batch ) 
 	{
+
 		this.shipSprite.setRotation( this.orientation.angle() - 90 );
 		GraphicsUtils.drawSpriteWithScreenWrap( this.shipSprite, this.position, batch );
 
 		for ( Bullet bullet : this.bullets )
 		{
 			bullet.render( batch );
-		}
-	}
-
-	@Override
-	public Actor hit( float x, float y ) 
-	{
-		return null;
-	}
-
-	@Override
-	public boolean touchDown(float arg0, float arg1, int arg2) 
-	{
-		return false;
-	}
-
-	@Override
-	public void touchDragged(float arg0, float arg1, int arg2) 
-	{	
-	
-	}
-
-	@Override
-	public void touchUp(float arg0, float arg1, int arg2) 
-	{
-		
+		}	
 	}
 	
 }

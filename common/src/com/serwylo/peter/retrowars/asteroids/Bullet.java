@@ -34,7 +34,7 @@ public class Bullet implements ICollidable
 	
 	private Rectangle boundingRect = new Rectangle();
 	
-	public Bullet( Vector2 position, Vector2 shipVelocity, Vector2 orientation )
+	public Bullet( Vector2 position, Vector2 shipVelocity, float angle )
 	{
 		this.position = position.cpy();
 		

@@ -6,9 +6,6 @@ import java.util.LinkedList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer10;
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.serwylo.peter.retrowars.Game;
 
@@ -27,11 +24,10 @@ public class AsteroidsGame extends Game
 	
 	private LinkedList<Asteroid> asteroids = new LinkedList<Asteroid>();
 	
-	public void create()
+	public void init( int width, int height )
 	{
-		super.create();
+		this.updateCameraViewport( 200 );
 		this.ship = new Ship();
-		this.stage.addActor( this.ship );
 	}
 	
 	/**

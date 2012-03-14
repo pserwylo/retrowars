@@ -17,6 +17,7 @@ public class RetrowarsDesktop
 		config.width = 800;
 		config.height = 480;
 		config.title = "Retrowars";
+		
 		new JoglApplication( new Retrowars(), config );
 	}
 

@@ -92,7 +92,6 @@ public class Asteroid implements ICollidable
 			this.size,
 			this.size );
 		
-		AsteroidsGame.getQuadTree().insert( this );
 	}
 	
 	/**
@@ -113,7 +112,6 @@ public class Asteroid implements ICollidable
 		this.position.x += this.velocity.x * delta;
 		this.position.y += this.velocity.y * delta;
 		GraphicsUtils.wrapVectorAroundScreen( this.position );
-		AsteroidsGame.getQuadTree().update( this );
 	}
 	
 	/**

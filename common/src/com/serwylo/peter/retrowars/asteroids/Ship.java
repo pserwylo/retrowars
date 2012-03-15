@@ -24,12 +24,6 @@ import com.serwylo.peter.retrowars.SpriteManager;
 public class Ship extends GameObject
 {
 
-	// Input keys for desktop version. The Android version will use a virtual d-pad.
-	private static final int KEY_ACCELERATE = Input.Keys.UP;
-	private static final int KEY_LEFT = Input.Keys.LEFT;
-	private static final int KEY_RIGHT = Input.Keys.RIGHT;
-	private static final int KEY_SHOOT = Input.Keys.SPACE;
-
 	/**
 	 * The number of milliseconds it takes to reload, before we can fire another bullet.
 	 * Used in conjunction with {@link lastFireTime} to keep track of how often we fire.
@@ -72,12 +66,13 @@ public class Ship extends GameObject
 		this.shipSprite = SpriteManager.getShipSprite();
 		
 		PolygonShape b2Shape = new PolygonShape();
-		b2Shape.setRadius( this.shipSprite.getHeight() / 2 );
+		b2Shape.setAsBox( this.shipSprite.getWidth(), this.shipSprite.getHeight() );
+		// b2Shape.setRadius( this.shipSprite.getHeight() / 2 );
 		
 		BodyDef b2BodyDef = new BodyDef();
 		b2BodyDef.type = BodyType.DynamicBody;
-		b2BodyDef.position.x = 0;
-		b2BodyDef.position.y = 0;
+		b2BodyDef.position.x = 100;
+		b2BodyDef.position.y = 100;
 		
 		this.b2Body = Game.getInstance().getWorld().createBody( b2BodyDef );
 		this.b2Body.createFixture( b2Shape, 1 );
@@ -94,9 +89,11 @@ public class Ship extends GameObject
 	@Override
 	public void update( float delta )
 	{
-		this.position.add( this.velocity );
-		GraphicsUtils.wrapVectorAroundScreen( this.position );
+		GraphicsUtils.wrapVectorAroundScreen( this.b2Body.getPosition() );
+
+		Input input = Gdx.app.getInput();
 		
+		/*
 		Iterator<Bullet> it = this.bullets.iterator();
 		while( it.hasNext() )
 		{
@@ -106,8 +103,6 @@ public class Ship extends GameObject
 				it.remove();	
 			}
 		}
-		
-		Input input = Gdx.app.getInput();
 		
 		this.isThrusting = ( input.isKeyPressed( KEY_ACCELERATE ) );
 		if ( this.isThrusting )
@@ -128,39 +123,45 @@ public class Ship extends GameObject
 		{
 			this.orientation.rotate( -ROTATE_SPEED * delta );
 		}
+		*/
 		
-		if ( input.isKeyPressed( KEY_SHOOT ) && this.lastFireTime + TIME_BETWEEN_SHOTS < System.currentTimeMillis() )
-		{
-			this.fire();
-		}
 	}
 	
 	/**
 	 * Create a new bullet, and add it to the list of bullets so that it will
 	 * get updated and rendered to the screen.
 	 */
-	private void fire()
+	public void fire()
 	{
-		Bullet bullet = new Bullet( 
-			this.b2Body.getPosition().cpy(), 
-			this.b2Body.getLinearVelocity(), 
-			this.b2Body.getAngle() 
-		);
-		this.bullets.add( bullet );
-		this.lastFireTime = System.currentTimeMillis();
+		if ( this.lastFireTime + TIME_BETWEEN_SHOTS < System.currentTimeMillis() )
+		{
+			System.out.println( "Shoot bullet" );
+			Bullet bullet = new Bullet( 
+				this.b2Body.getPosition().cpy(), 
+				this.b2Body.getLinearVelocity(), 
+				this.b2Body.getAngle() 
+			);
+			this.bullets.add( bullet );
+			this.lastFireTime = System.currentTimeMillis();
+		}
 	}
 
 	@Override
 	public void render( SpriteBatch batch ) 
 	{
 
-		this.shipSprite.setRotation( this.orientation.angle() - 90 );
-		GraphicsUtils.drawSpriteWithScreenWrap( this.shipSprite, this.position, batch );
+		this.shipSprite.setRotation( this.b2Body.getAngle() - 90 );
+		GraphicsUtils.drawSpriteWithScreenWrap( this.shipSprite, this.b2Body.getPosition(), batch );
 
 		for ( Bullet bullet : this.bullets )
 		{
 			bullet.render( batch );
-		}	
+		}
+	}
+
+	public Vector2 getPosition() 
+	{
+		return this.b2Body.getPosition();
 	}
 	
 }

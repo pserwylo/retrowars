@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -12,23 +13,16 @@ import com.serwylo.peter.retrowars.Game;
 public class AsteroidsGame extends Game
 {
 
-	/**
-	 * The ship needs to be positioned in the centre of the screen, but when
-	 * we create it we don't know where the centre of the screen is. Instead,
-	 * we will wait until the first time resize(...) is called. This flag makes
-	 * sure we only reposition the ship the first time its resized.
-	 */
-	private boolean startedFlag = false;
+
+	// Input keys for desktop version. The Android version will use a virtual d-pad.
+	private static final int KEY_ACCELERATE = Input.Keys.UP;
+	private static final int KEY_LEFT = Input.Keys.LEFT;
+	private static final int KEY_RIGHT = Input.Keys.RIGHT;
+	private static final int KEY_SHOOT = Input.Keys.SPACE;
 	
 	private Ship ship;
 	
 	private LinkedList<Asteroid> asteroids = new LinkedList<Asteroid>();
-	
-	public void init( int width, int height )
-	{
-		this.updateCameraViewport( 200 );
-		this.ship = new Ship();
-	}
 	
 	/**
 	 * Creates a new asteroid, and places it on the screen, being careful not to place it on top of the ship.
@@ -36,7 +30,7 @@ public class AsteroidsGame extends Game
 	 * or {@link Asteroid.SIZE_LARGE}.
 	 * @return
 	 */
-	private Asteroid createAsteroid( int size )
+	/*private Asteroid createAsteroid( int size )
 	{
 		int w = Gdx.graphics.getWidth();
 		int h = Gdx.graphics.getHeight();
@@ -61,53 +55,44 @@ public class AsteroidsGame extends Game
 		Asteroid asteroid = new Asteroid( size, position, velocity );
 		this.asteroids.add( asteroid );
 		return asteroid;
+	}*/
+	
+	@Override
+	protected void init( int width, int height )
+	{
+		this.updateCameraViewport( 200 );
+		this.ship = new Ship();
+	
+		this.ship.getPosition().x = width / 2;
+		this.ship.getPosition().y = height / 2;
+
+		/*for ( int i = 0; i < 10; i ++ )
+		{
+			this.createAsteroid( Asteroid.SIZE_TINY );
+			this.createAsteroid( Asteroid.SIZE_SMALL );
+			this.createAsteroid( Asteroid.SIZE_MEDIUM );
+			this.createAsteroid( Asteroid.SIZE_LARGE );
+		}*/
 	}
 	
 	@Override
-	public void resize( int width, int height )
+	protected void update( float deltaTime )
 	{
-		super.resize( width, height );
-		
-		// The first time we resize we need to position the ship.
-		if ( !startedFlag )
-		{
-			this.ship.getPosition().x = width / 2;
-			this.ship.getPosition().y = height / 2;
-
-			for ( int i = 0; i < 10; i ++ )
-			{
-				this.createAsteroid( Asteroid.SIZE_TINY );
-				this.createAsteroid( Asteroid.SIZE_SMALL );
-				this.createAsteroid( Asteroid.SIZE_MEDIUM );
-				this.createAsteroid( Asteroid.SIZE_LARGE );
-			}
-			
-			startedFlag = true;
-		}
-	}
-	
-	public void update()
-	{
-		float delta = Gdx.graphics.getDeltaTime();
-
 		Iterator<Asteroid> it = this.asteroids.iterator();
 		while ( it.hasNext() )
 		{
 			Asteroid asteroid = it.next();
-			asteroid.update( delta );
+			asteroid.update( deltaTime );
 		}
 		
-		this.stage.act( delta );
+		this.ship.update( deltaTime );
 	}
 	
+	@Override
 	public void render()
 	{
-		this.update();
-		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear( GL10.GL_COLOR_BUFFER_BIT );
-		
-		this.stage.draw();
 
 		SpriteBatch batch = new SpriteBatch();
 		batch.begin();
@@ -117,9 +102,62 @@ public class AsteroidsGame extends Game
 			Asteroid asteroid = it.next();
 			asteroid.render( batch );
 		}
+		this.ship.render( batch );
 		batch.end();
-		
-		// quadTree.draw( this.stage.getCamera() );
+	}
+
+	@Override
+	public boolean keyDown( int keyCode ) 
+	{
+		Gdx.app.log( "KEY DOWN", "keyCode = " + keyCode );
+		if ( keyCode == KEY_SHOOT )
+		{
+			this.ship.fire();
+		}
+		return true;
+	}
+
+	@Override
+	public boolean keyTyped(char arg0) 
+	{
+		return false;
+	}
+
+	@Override
+	public boolean keyUp(int arg0) 
+	{
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int arg0) 
+	{
+		return false;
+	}
+
+	@Override
+	public boolean touchDown( int arg0, int arg1, int arg2, int arg3 ) 
+	{
+		System.out.println( "Touch Down" );
+		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int arg0, int arg1, int arg2) 
+	{
+		return false;
+	}
+
+	@Override
+	public boolean touchMoved(int arg0, int arg1) 
+	{
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int arg0, int arg1, int arg2, int arg3) 
+	{
+		return false;
 	}
 	
 }

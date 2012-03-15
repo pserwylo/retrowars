@@ -16,7 +16,7 @@ public class Retrowars implements ApplicationListener
 	@Override
 	public void create() 
 	{
-		Gdx.input = new RemoteInput();
+		// Gdx.input = new RemoteInput();
 		this.game = new AsteroidsGame();
 		this.game.create();
 	}

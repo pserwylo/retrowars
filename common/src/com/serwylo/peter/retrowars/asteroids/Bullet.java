@@ -4,11 +4,16 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.GameObject;
 import com.serwylo.peter.retrowars.GraphicsUtils;
 import com.serwylo.peter.retrowars.SpriteManager;
 import com.serwylo.peter.retrowars.collisions.ICollidable;
 
-public class Bullet implements ICollidable
+public class Bullet extends GameObject
 {
 	
 	public static final int SPEED = 500;
@@ -30,40 +35,42 @@ public class Bullet implements ICollidable
 	
 	private long birthTime;
 	
-	private Vector2 position, velocity;
+	private boolean isAlive;
 	
-	private Rectangle boundingRect = new Rectangle();
+	private Body b2Body;
 	
 	public Bullet( Vector2 position, Vector2 shipVelocity, float angle )
 	{
-		this.position = position.cpy();
-		
-		// Convert the orientation into a velocity vector which will be added to the ships
-		// velocity (which was passed into this constructor).
-		Vector2 bulletVelocity = orientation.cpy().nor();
-		bulletVelocity.x *= SPEED;
-		bulletVelocity.y *= SPEED;
-		
-		this.velocity = shipVelocity.cpy().add( bulletVelocity );
-		
 		if ( bulletSprite == null )
 		{
 			bulletSprite = SpriteManager.getBulletSprite();
 		}
-		
+
+		// Convert the orientation into a velocity vector which will be added to the ships
+		// velocity (which was passed into this constructor).
+		Vector2 bulletVelocity = new Vector2( 0, 1.0f ).rotate( angle );
+		bulletVelocity.x *= SPEED;
+		bulletVelocity.y *= SPEED;
+		bulletVelocity.add( shipVelocity );
+
+		PolygonShape b2Shape = new PolygonShape();
+		b2Shape.setAsBox( bulletSprite.getWidth(), bulletSprite.getHeight() );
+		// b2Shape.setRadius( bulletSprite.getWidth() / 2 );
+		BodyDef b2BodyDef = new BodyDef();
+		b2BodyDef.position.x = position.x;
+		b2BodyDef.position.y = position.y;		
+		b2BodyDef.linearVelocity.x = bulletVelocity.x;
+		b2BodyDef.linearVelocity.y = bulletVelocity.y;
+		this.b2Body = Game.getInstance().getWorld().createBody( b2BodyDef );
+		this.b2Body.createFixture( b2Shape, 1 );
+		b2Shape.dispose();
+			
 		this.birthTime = System.currentTimeMillis();
-
-		this.boundingRect.width = bulletSprite.getWidth();
-		this.boundingRect.height = bulletSprite.getHeight();
-
-		AsteroidsGame.getQuadTree().insert( this );
 	}
 	
-	public Rectangle getBoundingRect()
+	public boolean isAlive()
 	{
-		this.boundingRect.x = this.position.x - bulletSprite.getWidth() / 2;
-		this.boundingRect.y = this.position.y - bulletSprite.getHeight() / 2;
-		return this.boundingRect;
+		return this.isAlive;
 	}
 	
 	/**
@@ -73,27 +80,15 @@ public class Bullet implements ICollidable
 	 * @return If the bullet has been around longer than {@link LIFE}, then it will 
 	 * return false.
 	 */
-	public boolean update( float delta )
+	public void update( float deltaTime )
 	{
-		this.position.x += this.velocity.x * delta;
-		this.position.y += this.velocity.y * delta;
-		GraphicsUtils.wrapVectorAroundScreen( this.position );
-
-		AsteroidsGame.getQuadTree().update( this );
-		
-		boolean keep = ( ( System.currentTimeMillis() < this.birthTime + LIFE ) );
-		
-		if ( !keep )
-		{
-			AsteroidsGame.getQuadTree().remove( this );
-		}
-		
-		return keep;
+		GraphicsUtils.wrapVectorAroundScreen( this.b2Body.getPosition() );
+		this.isAlive = ( ( System.currentTimeMillis() < this.birthTime + LIFE ) );
 	}
 	
 	public void render( SpriteBatch batch )
 	{
-		bulletSprite.setPosition( this.position.x, this.position.y );
+		bulletSprite.setPosition( this.b2Body.getPosition().x, this.b2Body.getPosition().y );
 		long age = System.currentTimeMillis() - this.birthTime;
 		float alpha = 1.0f;
 		if ( age > FADE_AFTER )

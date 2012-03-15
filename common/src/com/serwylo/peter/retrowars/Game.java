@@ -2,6 +2,7 @@ package com.serwylo.peter.retrowars;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
@@ -11,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.serwylo.peter.retrowars.collisions.ICollidable;
 import com.serwylo.peter.retrowars.collisions.QuadTree;
 
-public abstract class Game implements ApplicationListener 
+public abstract class Game implements ApplicationListener, InputProcessor
 {
 
 	/**
@@ -152,6 +153,8 @@ public abstract class Game implements ApplicationListener
 			
 			this.camera = new OrthographicCamera( width, height );
 			this.camera.position.set( 0, height / 2, 0 );
+			
+			Gdx.input.setInputProcessor( this );
 			
 			// Let the subclass do whatever initialization it requires...
 			this.init( width, height );

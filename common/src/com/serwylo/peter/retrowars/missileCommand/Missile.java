@@ -44,7 +44,6 @@ public class Missile implements ICollidable
 			bulletSprite.getHeight()
 		);
 
-		MissileCommandGame.getQuadTree().insert( this );
 	}
 	
 	/**
@@ -68,14 +67,11 @@ public class Missile implements ICollidable
 
 		this.boundingRect.x = this.position.x;
 		this.boundingRect.x = this.position.y;
-
-		MissileCommandGame.getQuadTree().update( this );
 				
 		boolean keep = ( this.position.y > this.target.getPosition().y );
 
 		if ( !keep )
 		{
-			MissileCommandGame.getQuadTree().remove( this );
 		}
 		
 		return keep;

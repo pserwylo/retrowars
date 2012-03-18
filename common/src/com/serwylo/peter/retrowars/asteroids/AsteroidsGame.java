@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -12,7 +13,6 @@ import com.serwylo.peter.retrowars.Game;
 
 public class AsteroidsGame extends Game
 {
-
 
 	// Input keys for desktop version. The Android version will use a virtual d-pad.
 	private static final int KEY_ACCELERATE = Input.Keys.UP;
@@ -30,10 +30,10 @@ public class AsteroidsGame extends Game
 	 * or {@link Asteroid.SIZE_LARGE}.
 	 * @return
 	 */
-	/*private Asteroid createAsteroid( int size )
+	private Asteroid createAsteroid( int size )
 	{
-		int w = Gdx.graphics.getWidth();
-		int h = Gdx.graphics.getHeight();
+		float w = this.worldSize.x;
+		float h = this.worldSize.y;
 		int minDistanceFromShip = size * 2;
 		int minDistanceFromShip2 = minDistanceFromShip * minDistanceFromShip;
 		
@@ -55,24 +55,26 @@ public class AsteroidsGame extends Game
 		Asteroid asteroid = new Asteroid( size, position, velocity );
 		this.asteroids.add( asteroid );
 		return asteroid;
-	}*/
+	}
 	
 	@Override
 	protected void init( int width, int height )
 	{
+		Gdx.input.setInputProcessor( this.inputHandler );
+		
 		this.updateCameraViewport( 200 );
 		this.ship = new Ship();
-	
+		
 		this.ship.getPosition().x = width / 2;
 		this.ship.getPosition().y = height / 2;
 
-		/*for ( int i = 0; i < 10; i ++ )
+		for ( int i = 0; i < 10; i ++ )
 		{
 			this.createAsteroid( Asteroid.SIZE_TINY );
 			this.createAsteroid( Asteroid.SIZE_SMALL );
 			this.createAsteroid( Asteroid.SIZE_MEDIUM );
-			this.createAsteroid( Asteroid.SIZE_LARGE );
-		}*/
+			/*this.createAsteroid( Asteroid.SIZE_LARGE );*/
+		}
 	}
 	
 	@Override
@@ -91,10 +93,10 @@ public class AsteroidsGame extends Game
 	@Override
 	public void render()
 	{
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear( GL10.GL_COLOR_BUFFER_BIT );
+		super.render();
 
 		SpriteBatch batch = new SpriteBatch();
+		batch.getProjectionMatrix().set( this.camera.combined );
 		batch.begin();
 		Iterator<Asteroid> it = this.asteroids.iterator();
 		while ( it.hasNext() )
@@ -104,60 +106,63 @@ public class AsteroidsGame extends Game
 		}
 		this.ship.render( batch );
 		batch.end();
+		
+		this.renderDebug();
 	}
 
-	@Override
-	public boolean keyDown( int keyCode ) 
-	{
-		Gdx.app.log( "KEY DOWN", "keyCode = " + keyCode );
-		if ( keyCode == KEY_SHOOT )
+	private InputProcessor inputHandler = new InputProcessor() {
+			
+		@Override
+		public boolean keyDown( int keyCode ) 
 		{
-			this.ship.fire();
+			if ( keyCode == KEY_SHOOT )
+			{
+				ship.fire();
+			}
+			return true;
 		}
-		return true;
-	}
-
-	@Override
-	public boolean keyTyped(char arg0) 
-	{
-		return false;
-	}
-
-	@Override
-	public boolean keyUp(int arg0) 
-	{
-		return false;
-	}
-
-	@Override
-	public boolean scrolled(int arg0) 
-	{
-		return false;
-	}
-
-	@Override
-	public boolean touchDown( int arg0, int arg1, int arg2, int arg3 ) 
-	{
-		System.out.println( "Touch Down" );
-		return false;
-	}
-
-	@Override
-	public boolean touchDragged(int arg0, int arg1, int arg2) 
-	{
-		return false;
-	}
-
-	@Override
-	public boolean touchMoved(int arg0, int arg1) 
-	{
-		return false;
-	}
-
-	@Override
-	public boolean touchUp(int arg0, int arg1, int arg2, int arg3) 
-	{
-		return false;
-	}
 	
+		@Override
+		public boolean keyTyped(char arg0) 
+		{
+			return false;
+		}
+	
+		@Override
+		public boolean keyUp(int arg0) 
+		{
+			return false;
+		}
+	
+		@Override
+		public boolean scrolled(int arg0) 
+		{
+			return false;
+		}
+	
+		@Override
+		public boolean touchDown( int arg0, int arg1, int arg2, int arg3 ) 
+		{
+			System.out.println( "Touch Down" );
+			return false;
+		}
+	
+		@Override
+		public boolean touchDragged(int arg0, int arg1, int arg2) 
+		{
+			return false;
+		}
+	
+		@Override
+		public boolean touchMoved(int arg0, int arg1) 
+		{
+			return false;
+		}
+	
+		@Override
+		public boolean touchUp(int arg0, int arg1, int arg2, int arg3) 
+		{
+			return false;
+		}
+	};
 }

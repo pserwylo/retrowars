@@ -4,12 +4,23 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.GameObject;
 import com.serwylo.peter.retrowars.GraphicsUtils;
 import com.serwylo.peter.retrowars.SpriteManager;
 import com.serwylo.peter.retrowars.collisions.ICollidable;
 
-public class Asteroid implements ICollidable
+public class Asteroid extends GameObject
 {
+
+	/**
+	 * Used for Box2D collision filtering.
+	 */
+	public static final short CATEGORY_BIT = 4;
 
 	public static final int SPRITE_LARGE = 0;
 	public static final int SPRITE_MEDIUM = 1;
@@ -25,13 +36,7 @@ public class Asteroid implements ICollidable
 	
 	private static Sprite[] asteroidSprites;
 	
-	private Vector2 position, velocity;
-	
 	private int size;
-	
-	private Sprite currentSprite;
-	
-	private Rectangle boundingRect;
 	
 	public static Asteroid createLarge( Vector2 position, Vector2 velocity )
 	{
@@ -54,10 +59,7 @@ public class Asteroid implements ICollidable
 	}
 	
 	public Asteroid( int size, Vector2 position, Vector2 velocity )
-	{
-		this.position = position.cpy();
-		this.velocity = velocity.cpy();
-		
+	{	
 		if ( asteroidSprites == null )
 		{
 			asteroidSprites = SpriteManager.getAsteroidSprites();
@@ -84,14 +86,9 @@ public class Asteroid implements ICollidable
 		
 		this.size = size;
 		int i = (int)( Math.random() * 3 ) + ( spriteIndex * 3 );
-		this.currentSprite = asteroidSprites[ i ];
+		this.init( asteroidSprites[ i ], position, Asteroid.CATEGORY_BIT );
+		this.b2Body.applyLinearImpulse( velocity, this.b2Body.getPosition() );
 
-		this.boundingRect = new Rectangle(
-			this.position.x - this.size / 2,
-			this.position.y - this.size / 2,
-			this.size,
-			this.size );
-		
 	}
 	
 	/**
@@ -109,9 +106,7 @@ public class Asteroid implements ICollidable
 	 */
 	public void update( float delta )
 	{
-		this.position.x += this.velocity.x * delta;
-		this.position.y += this.velocity.y * delta;
-		GraphicsUtils.wrapVectorAroundScreen( this.position );
+		GraphicsUtils.wrapVectorAroundScreen( this.b2Body.getPosition() );
 	}
 	
 	/**
@@ -121,14 +116,7 @@ public class Asteroid implements ICollidable
 	 */
 	public void render( SpriteBatch batch )
 	{
-		GraphicsUtils.drawSpriteWithScreenWrap( this.currentSprite, this.position, batch );
-		
+		GraphicsUtils.drawSpriteWithScreenWrap( this.sprite, this.b2Body.getPosition(), batch );
 	}
 
-	@Override
-	public Rectangle getBoundingRect() 
-	{
-		return this.boundingRect;
-	}
-	
 }

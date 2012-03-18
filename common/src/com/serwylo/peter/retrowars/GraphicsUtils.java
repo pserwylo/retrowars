@@ -14,19 +14,24 @@ public class GraphicsUtils
 
 	public static void drawDebugRect( Rectangle rect, Camera camera )
 	{
+		GraphicsUtils.drawDebugRect( rect, camera, 1.0f, 1.0f, 1.0f );
+	}
+	
+	public static void drawDebugRect( Rectangle rect, Camera camera, float r, float g, float b )
+	{
     	ImmediateModeRenderer10 debug = new ImmediateModeRenderer10( 4 );
     	debug.begin( camera.combined, GL10.GL_LINE_LOOP );
 	    
-	    	debug.color( 1.0f, 1.0f, 1.0f, 1.0f );
+	    	debug.color( r, g, b, 1.0f );
     		debug.vertex( rect.x, rect.y, 0 );
 
-	    	debug.color( 1.0f, 1.0f, 1.0f, 1.0f );
+	    	debug.color( r, g, b, 1.0f );
 	    	debug.vertex( rect.x + rect.width, rect.y , 0 );
 
-	    	debug.color( 1.0f, 1.0f, 1.0f, 1.0f );
+	    	debug.color( r, g, b, 1.0f );
 	    	debug.vertex( rect.x + rect.width, rect.y + rect.height, 0 );
 
-	    	debug.color( 1.0f, 1.0f, 1.0f, 1.0f );
+	    	debug.color( r, g, b, 1.0f );
 	    	debug.vertex( rect.x, rect.y + rect.height, 0 );
     	
 	    debug.end();

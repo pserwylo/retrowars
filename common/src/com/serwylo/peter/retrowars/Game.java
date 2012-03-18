@@ -5,20 +5,20 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Frustum;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.serwylo.peter.retrowars.collisions.ICollidable;
 import com.serwylo.peter.retrowars.collisions.QuadTree;
 
-public abstract class Game implements ApplicationListener, InputProcessor
+public abstract class Game implements ApplicationListener
 {
 
-	/**
-	 * libgdx scenegraph used to render the world.
-	 */
-	protected Stage stage;
+	protected Box2DDebugRenderer debugRenderer;
 	
 	/**
 	 * @see getWorld
@@ -33,6 +33,18 @@ public abstract class Game implements ApplicationListener, InputProcessor
 		return this.world;
 	}
 	
+	protected Vector2 worldSize = new Vector2( 0.0f, 0.0f );
+	
+	/**
+	 * This is the size of the game world, rather than the screen size.
+	 * It is size for which I want Box2D objects to move around. 
+	 * @return
+	 */
+	public Vector2 getWorldSize()
+	{
+		return this.worldSize;
+	}
+	
 	/**
 	 * The camera, which is setup to work in a 2D environment, and configured so that we
 	 * can think in metres, rather than pixels. This will not only help appease Box2D which
@@ -40,29 +52,6 @@ public abstract class Game implements ApplicationListener, InputProcessor
 	 * which seem reasonable.
 	 */
 	protected OrthographicCamera camera;
-	
-	/**
-	 * @deprecated (For when I was going to deal with the collisions myself, now I want to
-	 * use Box2D).
-	 */
-	protected QuadTree<ICollidable> quadTree;
-	
-	private int screenWidth = 0, screenHeight = 0;
-	
-	public int getScreenWidth()
-	{
-		return this.screenWidth;
-	}
-	
-	public int getScreenHeight()
-	{
-		return this.screenHeight;
-	}
-	
-	public QuadTree<ICollidable> getQuadTree() 
-	{ 
-		return this.quadTree; 
-	}
 	
 	private static Game currentGameInstance;
 	
@@ -79,18 +68,17 @@ public abstract class Game implements ApplicationListener, InputProcessor
 	public Game()
 	{
 		Game.currentGameInstance = this;
+		this.debugRenderer = new Box2DDebugRenderer();
 	}
 	
 	@Override
 	public void create() 
 	{
-		this.stage = new Stage( 0, 0, true );
 	}
 
 	@Override
 	public void dispose() 
 	{
-		this.stage.dispose();
 	}
 
 	@Override
@@ -110,7 +98,7 @@ public abstract class Game implements ApplicationListener, InputProcessor
 	 * @param width
 	 * @param height
 	 */
-	protected abstract void init( int width, int height );
+	protected abstract void init( int screenWidth, int screenHeight );
 	
 	/**
 	 * The update method for your particular game. 
@@ -119,6 +107,11 @@ public abstract class Game implements ApplicationListener, InputProcessor
 	 * @param deltaTime The number of seconds since last update frame.
 	 */
 	protected abstract void update( float deltaTime );
+	
+	protected void updateGame( float deltaTime )
+	{
+		this.world.step( deltaTime, 8, 3 );
+	}
 	
 	/**
 	 * I don't like that libgdx intermingles render with update, so I added the {@link update} method, 
@@ -129,19 +122,39 @@ public abstract class Game implements ApplicationListener, InputProcessor
 	@Override
 	public void render()
 	{
-		this.update( Gdx.graphics.getDeltaTime() );
+		float deltaTime = Gdx.graphics.getDeltaTime();
+		this.updateGame( deltaTime );
+		this.update( deltaTime );
 		
 		GL10 gl = Gdx.graphics.getGL10();
 		gl.glClear( GL10.GL_COLOR_BUFFER_BIT );
 		this.camera.update();
-		this.camera.apply( gl );
+        this.camera.apply( gl );
 	}
 	
+	/**
+	 * Viewport is drawn in Green, Screen border is drawn in blue, World in red.
+	 * Box2D stuff drawn with the {@link debugRenderer}.
+	 */
+	public void renderDebug()
+	{
+		this.camera.update();
+		this.camera.apply( Gdx.gl10 );
+        this.debugRenderer.render( this.world, this.camera.combined );
+        
+        Rectangle viewportRect = new Rectangle( 3, 3, this.camera.viewportWidth - 6, this.camera.viewportHeight - 6 );
+        GraphicsUtils.drawDebugRect( viewportRect, this.camera, 0.0f, 1.0f, 0.0f );
+        
+        Rectangle worldRect = new Rectangle( 6, 6, this.worldSize.x - 9, this.worldSize.y - 9 );
+        GraphicsUtils.drawDebugRect( worldRect, this.camera, 1.0f, 0.0f, 0.0f );
+        
+        Rectangle screenRect = new Rectangle( 1, 1, this.camera.viewportWidth - 2, this.camera.viewportHeight - 2 );
+        GraphicsUtils.drawDebugRect( screenRect, this.camera, 0.0f, 0.0f, 1.0f );
+	}
+
 	@Override
 	public void resize( int width, int height ) 
 	{
-		this.screenWidth = width;
-		this.screenHeight = height;
 		
 		// The first time we resize the window, we are actually configuring the display
 		// for the first time...
@@ -149,12 +162,9 @@ public abstract class Game implements ApplicationListener, InputProcessor
 		{
 			// No gravity, because this is probably a top down game...
 			this.world = new World( new Vector2( 0.0f, 0.0f ), true );
-			this.quadTree = new QuadTree<ICollidable>( new Rectangle( 0, 0, width, height ) );
 			
 			this.camera = new OrthographicCamera( width, height );
-			this.camera.position.set( 0, height / 2, 0 );
-			
-			Gdx.input.setInputProcessor( this );
+			this.updateCameraViewport( Math.min( width, height ) );
 			
 			// Let the subclass do whatever initialization it requires...
 			this.init( width, height );
@@ -173,26 +183,43 @@ public abstract class Game implements ApplicationListener, InputProcessor
 	 */
 	public void updateCameraViewport( float minMetres )
 	{
-		if ( this.screenWidth == 0 || this.screenHeight == 0 )
+		int w = Gdx.graphics.getWidth();
+		int h = Gdx.graphics.getHeight();
+		if ( w == 0 || h == 0 )
 		{
 			// Why do I *need* a 'throws' statement for other types of exceptions other than this one?
 			throw new IllegalArgumentException( "Cannot update camera viewport, the screen size has not yet been determined." );
 		}
+
+		Gdx.app.log( "SCREEN", "Size: (" + w + ", " + h + ")" );
 		
-		if ( this.screenWidth < this.screenHeight )
+		float factor = 1.0f;
+		if ( w < h )
 		{
-			float factor = minMetres / this.screenWidth;
+			factor = minMetres / w;
 			this.camera.viewportWidth = minMetres;
-			this.camera.viewportHeight = this.screenHeight * factor;
+			this.camera.viewportHeight = h * factor;
+			Gdx.app.log( "SCREEN", "Scale factor: " + factor );
 		}
 		else
 		{
-			float factor = minMetres / this.screenHeight;
-			this.camera.viewportWidth = minMetres;
-			this.camera.viewportHeight = this.screenHeight * factor;
+			factor = minMetres / h;
+			this.camera.viewportWidth = w * factor;
+			this.camera.viewportHeight = minMetres;
+			Gdx.app.log( "SCREEN", "Scale factor: " + factor );
 		}
+
+		Gdx.app.log( "VIEWPORT", "Size: (" + this.camera.viewportWidth + ", " + this.camera.viewportHeight + ")" );
 		
-		this.camera.position.set( 0, this.camera.viewportHeight / 2, 0 );
+		this.camera.position.x = this.camera.viewportWidth / 2;
+		this.camera.position.y = this.camera.viewportHeight / 2;
+		this.camera.position.z = 0;
+		this.camera.zoom = 1 / factor;
+
+		this.worldSize.x = this.camera.viewportWidth;
+		this.worldSize.y = this.camera.viewportHeight;
+
+		Gdx.app.log( "CAMERA", "Position: " + this.camera.position );
 	}
 	
 

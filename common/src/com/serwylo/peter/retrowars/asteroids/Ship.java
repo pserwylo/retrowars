@@ -1,19 +1,12 @@
 package com.serwylo.peter.retrowars.asteroids;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.serwylo.peter.retrowars.Game;
 import com.serwylo.peter.retrowars.GameObject;
 import com.serwylo.peter.retrowars.GraphicsUtils;
 import com.serwylo.peter.retrowars.SpriteManager;
@@ -23,6 +16,11 @@ import com.serwylo.peter.retrowars.SpriteManager;
  */
 public class Ship extends GameObject
 {
+
+	/**
+	 * Used for Box2D collision filtering.
+	 */
+	public static final short CATEGORY_BIT = 8;
 
 	/**
 	 * The number of milliseconds it takes to reload, before we can fire another bullet.
@@ -59,25 +57,21 @@ public class Ship extends GameObject
 	
 	private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 	
-	private Body b2Body;
-	
 	public Ship()
 	{
 		this.shipSprite = SpriteManager.getShipSprite();
 		
-		PolygonShape b2Shape = new PolygonShape();
-		b2Shape.setAsBox( this.shipSprite.getWidth(), this.shipSprite.getHeight() );
-		// b2Shape.setRadius( this.shipSprite.getHeight() / 2 );
-		
-		BodyDef b2BodyDef = new BodyDef();
-		b2BodyDef.type = BodyType.DynamicBody;
-		b2BodyDef.position.x = 100;
-		b2BodyDef.position.y = 100;
-		
-		this.b2Body = Game.getInstance().getWorld().createBody( b2BodyDef );
-		this.b2Body.createFixture( b2Shape, 1 );
-		
-		b2Shape.dispose();
+		this.init( SpriteManager.getShipSprite(), new Vector2( 200, 10 ), Ship.CATEGORY_BIT, Asteroid.CATEGORY_BIT );
+	}
+	
+	public void setThrusting( boolean isThrusting )
+	{
+		this.isThrusting = isThrusting;
+	}
+	
+	public boolean isThrusting()
+	{
+		return this.isThrusting;
 	}
 	
 	/**
@@ -90,7 +84,7 @@ public class Ship extends GameObject
 	public void update( float delta )
 	{
 		GraphicsUtils.wrapVectorAroundScreen( this.b2Body.getPosition() );
-
+		
 		Input input = Gdx.app.getInput();
 		
 		/*
@@ -135,7 +129,6 @@ public class Ship extends GameObject
 	{
 		if ( this.lastFireTime + TIME_BETWEEN_SHOTS < System.currentTimeMillis() )
 		{
-			System.out.println( "Shoot bullet" );
 			Bullet bullet = new Bullet( 
 				this.b2Body.getPosition().cpy(), 
 				this.b2Body.getLinearVelocity(), 
@@ -150,7 +143,7 @@ public class Ship extends GameObject
 	public void render( SpriteBatch batch ) 
 	{
 
-		this.shipSprite.setRotation( this.b2Body.getAngle() - 90 );
+		this.shipSprite.setRotation( this.b2Body.getAngle() );
 		GraphicsUtils.drawSpriteWithScreenWrap( this.shipSprite, this.b2Body.getPosition(), batch );
 
 		for ( Bullet bullet : this.bullets )

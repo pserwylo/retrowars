@@ -229,7 +229,6 @@ public class MissileCommandGame extends Game
 		
 		batch.end();
 		
-		MissileCommandGame.getQuadTree().draw( this.stage.getCamera() );
 	}
 	
 	/**
@@ -266,6 +265,18 @@ public class MissileCommandGame extends Game
 		
 		// Tower 1 is at position 7
 		this.towers.get( 2 ).getPosition().x = spacing * 7;
+	}
+
+	@Override
+	protected void init(int width, int height) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void update(float deltaTime) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -50,8 +50,6 @@ public class FriendlyMissile implements ICollidable
 			this.position.y,
 			bulletSprite.getWidth(),
 			bulletSprite.getHeight());
-		
-		MissileCommandGame.getQuadTree().insert( this );
 	}
 	
 	/**
@@ -66,8 +64,6 @@ public class FriendlyMissile implements ICollidable
 		this.boundingRect.x = this.position.x;
 		this.boundingRect.y = this.position.y;
 		
-		MissileCommandGame.getQuadTree().update( this );
-		
 		float distSquared = this.position.dst2( this.target );
 		if ( distSquared < this.distanceToTargetSquared )
 		{
@@ -78,7 +74,6 @@ public class FriendlyMissile implements ICollidable
 		else
 		{
 			// Notify the game, so that it can replace me with an explosion.
-			MissileCommandGame.getQuadTree().remove( this );
 			return false;
 		}
 	}

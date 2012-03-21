@@ -2,6 +2,7 @@ package com.serwylo.peter.retrowars;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -32,6 +33,16 @@ public abstract class GameObject
 	 */
 	protected Fixture b2SpriteFixture;
 	
+	/**
+	 * Width (in metres) of the object in the world.
+	 */
+	protected float width = 0.0f;
+
+	/**
+	 * Height (in metres) of the object in the world.
+	 */
+	protected float height = 0.0f;
+	
 	public abstract void update( float deltaTime );
 	
 	public abstract void render( SpriteBatch batch );
@@ -41,22 +52,51 @@ public abstract class GameObject
 		return this.b2Body;
 	}
 	
+	protected void helpDrawSprite( SpriteBatch batch )
+	{
+		Vector2 pos = this.b2Body.getPosition();
+		
+		this.sprite.setOrigin( this.width / 2, this.height / 2 );
+		this.sprite.setSize( this.width, this.height );
+		this.sprite.setRotation( MathUtils.radiansToDegrees * this.b2Body.getAngle() );
+		this.sprite.setPosition( pos.x - this.width / 2, pos.y - this.height / 2 );
+		this.sprite.draw( batch );
+		
+		/*batch.draw( 
+			this.sprite, 
+			pos.x - this.width / 2, 
+			pos.y - this.height / 2, 
+			this.width, 
+			this.height
+		);*/
+	}
+	
 	/**
-	 * Sets up a Box2D body for the {@link sprite}, and stores the {@link sprite} as a member 
-	 * property of the object.
+	 * Sets up a Box2D body for this game object.
+	 * 
+	 * Stores the {@link size} as {@link width} and {@link height} member properties.
 	 * 
 	 * If no shape is passed in, then the shape will be a circle with a diameter of half the
-	 * {@link sprite}'s height. 
+	 * {@link size}'s x (width) component. 
 	 * 
 	 * The body will be a {@link BodyType.DynamicBody}. 
 	 * 
-	 * @param sprite
+	 * @param size
 	 * @param position
+	 * @param shape If not null, this WILL BE DISPOSED OF when done.
 	 * @param categoryBits
 	 * @param maskBits
 	 */
-	protected void init( Sprite sprite, Vector2 position, Shape shape, short categoryBits, short maskBits )
+	protected void helpInit( 
+		Vector2 size,
+		Vector2 position, 
+		Shape shape, 
+		short categoryBits, 
+		short maskBits )
 	{
+		this.width = size.x;
+		this.height = size.y;
+		
 		BodyDef b2BodyDef = new BodyDef();
 		b2BodyDef.position.x = position.x;
 		b2BodyDef.position.y = position.y;
@@ -66,7 +106,7 @@ public abstract class GameObject
 		if ( shape == null )
 		{
 			shape = new CircleShape();
-			shape.setRadius( sprite.getHeight() / 2 );
+			shape.setRadius( width / 2 );
 		}
 		
 		FixtureDef b2FixtureDef = new FixtureDef();
@@ -78,27 +118,31 @@ public abstract class GameObject
 		this.b2SpriteFixture = this.b2Body.createFixture( b2FixtureDef );
 		
 		shape.dispose();
-		
-		this.sprite = sprite;
 	}
 
-	protected void init( Sprite sprite, Vector2 position, short categoryBits )
+	protected void helpInit( Vector2 size, Vector2 position, short categoryBits )
 	{
-		this.init( sprite, position, null, categoryBits, (short)0xFFFF );
+		this.helpInit( size, position, null, categoryBits, (short)0xFFFF );
+	}
+
+	protected void helpInit( Vector2 size, Vector2 position, Shape shape, short categoryBits )
+	{
+		this.helpInit( size, position, shape, categoryBits, (short)0xFFFF );
 	}
 	
-	protected void init( Sprite sprite, Vector2 position, short categoryBits, short maskBits )
+	protected void helpInit( Vector2 size, Vector2 position, short categoryBits, short maskBits )
 	{
-		this.init( sprite, position, null, categoryBits, maskBits );
+		this.helpInit( size, position, null, categoryBits, maskBits );
 	}
 	
 	/**
-	 * @param sprite
+	 * Set
+	 * @param size
 	 * @param position
 	 */
-	protected void init( Sprite sprite, Vector2 position )
+	protected void helpInit( Vector2 size, Vector2 position )
 	{
-		this.init( sprite, position, null, (short)0x0001, (short)0xFFFF );
+		this.helpInit( size, position, null, (short)0x0001, (short)0xFFFF );
 	}
 	
 }

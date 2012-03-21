@@ -6,7 +6,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.serwylo.peter.retrowars.GameObject;
 import com.serwylo.peter.retrowars.GraphicsUtils;
 import com.serwylo.peter.retrowars.SpriteManager;
@@ -26,7 +28,7 @@ public class Ship extends GameObject
 	 * The number of milliseconds it takes to reload, before we can fire another bullet.
 	 * Used in conjunction with {@link lastFireTime} to keep track of how often we fire.
 	 */
-	private static final int TIME_BETWEEN_SHOTS = 50;
+	private static final int TIME_BETWEEN_SHOTS = 100;
 	
 	/**
 	 * The time when we last fired a bullet.
@@ -44,34 +46,49 @@ public class Ship extends GameObject
 	 * Acceleration of the ship. As with MAX_SPEED, the units it is in are currently
 	 * meaningless.
 	 */
-	private static final int ACCELERATION = 5;
+	private static final int ACCELERATION = 50;
 	
 	/**
-	 * Rotation speed (degrees per second).
+	 * Rotation speed (measured as the strength of the (box2d) angular impulse when turning).
 	 */
-	private static final int ROTATE_SPEED = 360;
+	private static final float ROTATE_SPEED = 1.5f;
 	
-	private Sprite shipSprite;
-	
-	private boolean isThrusting = false;
+	private boolean isThrusting = false, isTurningRight = false, isTurningLeft = false, isFiring = false;
 	
 	private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 	
 	public Ship()
 	{
-		this.shipSprite = SpriteManager.getShipSprite();
-		
-		this.init( SpriteManager.getShipSprite(), new Vector2( 200, 10 ), Ship.CATEGORY_BIT, Asteroid.CATEGORY_BIT );
+		this.sprite = SpriteManager.getShipSprite();
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox( 0.5f, 1.0f );
+		this.helpInit( new Vector2( 1.0f, 2.0f ), new Vector2( 200, 10 ), shape, Ship.CATEGORY_BIT, Asteroid.CATEGORY_BIT );
+		this.b2Body.setAngularDamping( 10.0f );
 	}
 	
-	public void setThrusting( boolean isThrusting )
+	public void thrust( boolean toggle )
 	{
-		this.isThrusting = isThrusting;
+		this.isThrusting = toggle;
+		if ( this.isThrusting )
+		{
+			// Limit the speed while we are accelerating...
+			this.b2Body.setLinearDamping( 1.0f );
+		}
+		else
+		{
+			// But once we stop accelerating, we just want to float...
+			this.b2Body.setLinearDamping( 0.0f );
+		}
 	}
 	
-	public boolean isThrusting()
+	public void turnLeft( boolean toggle )
 	{
-		return this.isThrusting;
+		this.isTurningLeft = toggle;
+	}
+	
+	public void turnRight( boolean toggle )
+	{
+		this.isTurningRight = toggle;
 	}
 	
 	/**
@@ -85,52 +102,50 @@ public class Ship extends GameObject
 	{
 		GraphicsUtils.wrapVectorAroundScreen( this.b2Body.getPosition() );
 		
-		Input input = Gdx.app.getInput();
-		
-		/*
-		Iterator<Bullet> it = this.bullets.iterator();
-		while( it.hasNext() )
+		if ( this.isFiring )
 		{
-			Bullet bullet = it.next();
-			if ( !bullet.update( delta ) )
-			{
-				it.remove();	
-			}
+			this.fireBullet();
 		}
 		
-		this.isThrusting = ( input.isKeyPressed( KEY_ACCELERATE ) );
 		if ( this.isThrusting )
 		{
-			this.velocity.add( new Vector2( this.orientation ).mul( delta ) );
-			if ( this.velocity.len2() > MAX_SPEED * MAX_SPEED )
-			{
-				this.velocity = this.velocity.nor().mul( MAX_SPEED ); 
-			}
+			float angle = MathUtils.radiansToDegrees * this.b2Body.getAngle() + 90;
+			Vector2 force = new Vector2( Ship.ACCELERATION, 0 ).rotate( angle );
+			this.b2Body.applyForceToCenter( force ); 
 		}
 
-		if ( input.isKeyPressed( KEY_LEFT ) )
+		if ( this.isTurningLeft )
 		{
-			this.orientation.rotate( ROTATE_SPEED * delta );
+			this.b2Body.applyAngularImpulse( ROTATE_SPEED );
 		}
-		
-		if ( input.isKeyPressed( KEY_RIGHT ) )
+
+		if ( this.isTurningRight )
 		{
-			this.orientation.rotate( -ROTATE_SPEED * delta );
+			this.b2Body.applyAngularImpulse( -ROTATE_SPEED );
 		}
-		*/
-		
+	
 	}
 	
+	/**
+	 * Toggles whether or not the ship is firing bullets.
+	 * If it is, then bullets will be fired every TIME_BETWEEN_SHOTS milliseconds.
+	 * @param toggle
+	 */
+	public void fire( boolean toggle )
+	{
+		this.isFiring = toggle;
+	}
+
 	/**
 	 * Create a new bullet, and add it to the list of bullets so that it will
 	 * get updated and rendered to the screen.
 	 */
-	public void fire()
+	protected void fireBullet()
 	{
 		if ( this.lastFireTime + TIME_BETWEEN_SHOTS < System.currentTimeMillis() )
 		{
 			Bullet bullet = new Bullet( 
-				this.b2Body.getPosition().cpy(), 
+				this.b2Body.getPosition(), 
 				this.b2Body.getLinearVelocity(), 
 				this.b2Body.getAngle() 
 			);
@@ -142,9 +157,14 @@ public class Ship extends GameObject
 	@Override
 	public void render( SpriteBatch batch ) 
 	{
-
-		this.shipSprite.setRotation( this.b2Body.getAngle() );
-		GraphicsUtils.drawSpriteWithScreenWrap( this.shipSprite, this.b2Body.getPosition(), batch );
+		// this.sprite.setRotation( MathUtils.radiansToDegrees * this.b2Body.getAngle() + 90 );
+		// this.sprite.setPosition( this.b2Body.getPosition().x, this.b2Body.getPosition().y );
+		// this.sprite.setSize( 0.5f, 1.0f );
+		// this.sprite.draw( batch );
+		
+		this.helpDrawSprite( batch );
+		
+		// GraphicsUtils.drawSpriteWithScreenWrap( this.sprite, this.b2Body.getPosition(), batch );
 
 		for ( Bullet bullet : this.bullets )
 		{

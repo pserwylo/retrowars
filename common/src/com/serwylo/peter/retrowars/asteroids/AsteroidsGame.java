@@ -32,8 +32,8 @@ public class AsteroidsGame extends Game
 	 */
 	private Asteroid createAsteroid( int size )
 	{
-		float w = this.worldSize.x;
-		float h = this.worldSize.y;
+		float w = this.getWorldWidth();
+		float h = this.getWorldHeight();
 		int minDistanceFromShip = size * 2;
 		int minDistanceFromShip2 = minDistanceFromShip * minDistanceFromShip;
 		
@@ -62,11 +62,10 @@ public class AsteroidsGame extends Game
 	{
 		Gdx.input.setInputProcessor( this.inputHandler );
 		
-		this.updateCameraViewport( 200 );
+		this.updateCameraViewport( 10, 1 );
 		this.ship = new Ship();
 		
-		this.ship.getPosition().x = width / 2;
-		this.ship.getPosition().y = height / 2;
+		this.ship.getB2Body().setTransform( this.getWorldWidth() / 2, this.getWorldHeight() / 2, 0.0f );
 
 		for ( int i = 0; i < 10; i ++ )
 		{
@@ -96,7 +95,8 @@ public class AsteroidsGame extends Game
 		super.render();
 
 		SpriteBatch batch = new SpriteBatch();
-		batch.getProjectionMatrix().set( this.camera.combined );
+		batch.setProjectionMatrix( this.camera.projection );
+		batch.setTransformMatrix( this.camera.view );
 		batch.begin();
 		Iterator<Asteroid> it = this.asteroids.iterator();
 		while ( it.hasNext() )
@@ -117,7 +117,19 @@ public class AsteroidsGame extends Game
 		{
 			if ( keyCode == KEY_SHOOT )
 			{
-				ship.fire();
+				ship.fire( true );
+			}
+			else if ( keyCode == KEY_ACCELERATE )
+			{
+				ship.thrust( true );
+			}
+			else if ( keyCode == KEY_LEFT )
+			{
+				ship.turnLeft( true );
+			}
+			else if ( keyCode == KEY_RIGHT )
+			{
+				ship.turnRight( true );
 			}
 			return true;
 		}
@@ -129,9 +141,25 @@ public class AsteroidsGame extends Game
 		}
 	
 		@Override
-		public boolean keyUp(int arg0) 
+		public boolean keyUp( int keyCode ) 
 		{
-			return false;
+			if ( keyCode == KEY_SHOOT )
+			{
+				ship.fire( false );
+			}
+			else if ( keyCode == KEY_ACCELERATE )
+			{
+				ship.thrust( false );
+			}
+			else if ( keyCode == KEY_LEFT )
+			{
+				ship.turnLeft( false );
+			}
+			else if ( keyCode == KEY_RIGHT )
+			{
+				ship.turnRight( false );
+			}
+			return true;
 		}
 	
 		@Override

@@ -45,6 +45,28 @@ public abstract class Game implements ApplicationListener
 		return this.worldSize;
 	}
 	
+	public float getWorldWidth()
+	{
+		return this.worldSize.x;
+	}
+	
+	public float getWorldHeight()
+	{
+		return this.worldSize.y;
+	}
+	
+	private float metresPerPixel = 1.0f;
+	
+	/**
+	 * Scale factor between Box2D and pixels on the screen. 
+	 * Used for scaling positions of sprite's for pixel perfect rendering.
+	 * @return
+	 */
+	public float getMetresPerPixel()
+	{
+		return this.metresPerPixel;
+	}
+	
 	/**
 	 * The camera, which is setup to work in a 2D environment, and configured so that we
 	 * can think in metres, rather than pixels. This will not only help appease Box2D which
@@ -164,7 +186,7 @@ public abstract class Game implements ApplicationListener
 			this.world = new World( new Vector2( 0.0f, 0.0f ), true );
 			
 			this.camera = new OrthographicCamera( width, height );
-			this.updateCameraViewport( Math.min( width, height ) );
+			this.updateCameraViewport( 1, 1 );
 			
 			// Let the subclass do whatever initialization it requires...
 			this.init( width, height );
@@ -173,15 +195,36 @@ public abstract class Game implements ApplicationListener
 	
 	/**
 	 * Depending on the size of your world, you should configure the {@link camera} so that its size is 
-	 * the appropriate size in metres. This method will take {@link minMetres} and try to fit the camera
-	 * to that size. It does this by looking at the {@link Math.min} of the width and height of the window
-	 * the game is running in, and setting that to {@link minMetres}.
+	 * the appropriate size in metres. This method will make sure that each {@link pixels} pixels on the
+	 * screen represent {@link metres} metres in the game world.
 	 * 
-	 * @param minMetres The number of metres wide or high to make the game viewport. If the width of the
-	 * screen is smaller, than this will be set to minMetres and height will be set appropriately 
-	 * according to the aspect ratio, and vice-verca.
+	 * It will also set the world size, which is the size of the world which fits in the available screen
+	 * real estate.
+	 * 
+	 * 
+	 *   <--- Screen: 800px, World : 40m -->
+	 * 
+	 *  +-----------------------------------+
+	 *  |                                   | ^
+	 *  |                                   | |
+	 *  |                                   | |
+	 *  |                                   | 
+	 *  |                                   | Screen: 400px
+	 *  |                                   | World: 20m
+	 *  |                                   | 
+	 *  |                                   | |
+	 *  |                                   | |
+	 *  |                                   | v
+	 *  +-----------------------------------+
+	 *  
+	 * 
+	 * 
+	 * 
+	 * 
+	 * @param pixels
+	 * @param metres
 	 */
-	public void updateCameraViewport( float minMetres )
+	public void updateCameraViewport( int pixels, float metres )
 	{
 		int w = Gdx.graphics.getWidth();
 		int h = Gdx.graphics.getHeight();
@@ -190,36 +233,22 @@ public abstract class Game implements ApplicationListener
 			// Why do I *need* a 'throws' statement for other types of exceptions other than this one?
 			throw new IllegalArgumentException( "Cannot update camera viewport, the screen size has not yet been determined." );
 		}
-
-		Gdx.app.log( "SCREEN", "Size: (" + w + ", " + h + ")" );
 		
-		float factor = 1.0f;
-		if ( w < h )
-		{
-			factor = minMetres / w;
-			this.camera.viewportWidth = minMetres;
-			this.camera.viewportHeight = h * factor;
-			Gdx.app.log( "SCREEN", "Scale factor: " + factor );
-		}
-		else
-		{
-			factor = minMetres / h;
-			this.camera.viewportWidth = w * factor;
-			this.camera.viewportHeight = minMetres;
-			Gdx.app.log( "SCREEN", "Scale factor: " + factor );
-		}
+		this.metresPerPixel = metres / pixels;
+		Gdx.app.log( "METRES_PER_PIXEL", this.metresPerPixel + "" );
+		this.camera.viewportWidth = w * this.metresPerPixel;
+		this.camera.viewportHeight = h * this.metresPerPixel;
 
+		Gdx.app.log( "SCREEN", "Size: (" + w + ", " + h + ")" );		
 		Gdx.app.log( "VIEWPORT", "Size: (" + this.camera.viewportWidth + ", " + this.camera.viewportHeight + ")" );
 		
-		this.camera.position.x = this.camera.viewportWidth / 2;
-		this.camera.position.y = this.camera.viewportHeight / 2;
-		this.camera.position.z = 0;
-		this.camera.zoom = 1 / factor;
-
-		this.worldSize.x = this.camera.viewportWidth;
+		this.worldSize.x = this.camera.viewportHeight;
 		this.worldSize.y = this.camera.viewportHeight;
 
-		Gdx.app.log( "CAMERA", "Position: " + this.camera.position );
+		this.camera.position.x = this.worldSize.x / 2;
+		this.camera.position.y = this.worldSize.y / 2;
+		this.camera.position.z = 0;
+		// this.camera.zoom = 1 / factor;
 	}
 	
 

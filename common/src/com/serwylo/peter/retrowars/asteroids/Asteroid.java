@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -22,15 +23,10 @@ public class Asteroid extends GameObject
 	 */
 	public static final short CATEGORY_BIT = 4;
 
-	public static final int SPRITE_LARGE = 0;
-	public static final int SPRITE_MEDIUM = 1;
-	public static final int SPRITE_SMALL = 2;
-	public static final int SPRITE_TINY = 3;
-
-	public static final int SIZE_LARGE = 128;
-	public static final int SIZE_MEDIUM = 64;
-	public static final int SIZE_SMALL = 32;
-	public static final int SIZE_TINY = 16;
+	public static final int SIZE_LARGE = 0;
+	public static final int SIZE_MEDIUM = 1;
+	public static final int SIZE_SMALL = 2;
+	public static final int SIZE_TINY = 3;
 	
 	public static final int SPEED = 500;
 	
@@ -66,36 +62,29 @@ public class Asteroid extends GameObject
 		}
 		
 		int spriteIndex = 0;
-		switch( size )
+		if ( size < 0 || size > SIZE_TINY )
 		{
-		case SIZE_TINY:
-			spriteIndex = SPRITE_TINY;
-			break;
-		case SIZE_SMALL:
-			spriteIndex = SPRITE_SMALL;
-			break;
-		case SIZE_MEDIUM:
-			spriteIndex = SPRITE_MEDIUM;
-			break;
-		case SIZE_LARGE:
-			spriteIndex = SPRITE_LARGE;
-			break;
-		default:
 			throw new IllegalArgumentException( "Size must be SIZE_TINY, SIZE_SMALL, SIZE_MEDIUM or SIZE_LARGE" );
 		}
 		
-		this.size = size;
 		int i = (int)( Math.random() * 3 ) + ( spriteIndex * 3 );
-		this.init( asteroidSprites[ i ], position, Asteroid.CATEGORY_BIT );
+		this.sprite = asteroidSprites[ i ];
+		this.size = size;
+		
+		float radius = (float)Math.pow( 2.0, this.size );
+		
+		CircleShape shape = new CircleShape();
+		shape.setRadius( radius );
+		this.helpInit( new Vector2( radius * 2, radius * 2 ), position, shape, Asteroid.CATEGORY_BIT );
 		this.b2Body.applyLinearImpulse( velocity, this.b2Body.getPosition() );
 
 	}
 	
 	/**
-	 * The diameter (in pixels) of this asteroid.
+	 * The diameter (in pixels) of this asteroid's sprite texture.
 	 * @return
 	 */
-	public int getSize() 
+	public int getSizePixels() 
 	{
 		return this.size;
 	}
@@ -116,7 +105,8 @@ public class Asteroid extends GameObject
 	 */
 	public void render( SpriteBatch batch )
 	{
-		GraphicsUtils.drawSpriteWithScreenWrap( this.sprite, this.b2Body.getPosition(), batch );
+		this.helpDrawSprite( batch );
+		// GraphicsUtils.drawSpriteWithScreenWrap( this.sprite, this.b2Body.getPosition(), batch );
 	}
 
 }

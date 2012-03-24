@@ -52,23 +52,43 @@ public abstract class GameObject
 		return this.b2Body;
 	}
 	
-	protected void helpDrawSprite( SpriteBatch batch )
+	public Sprite getSprite()
 	{
-		Vector2 pos = this.b2Body.getPosition();
-		
+		return this.sprite;
+	}
+	
+	public float getWidth()
+	{
+		return this.width;
+	}
+	
+	public float getHeight()
+	{
+		return this.height;
+	}
+	
+	public void helpDrawSprite( SpriteBatch batch )
+	{
+		this.helpDrawSprite( batch, this.b2Body.getPosition() );
+	}
+	
+	public void helpDrawSprite( SpriteBatch batch, float alpha )
+	{
+		this.helpDrawSprite( batch, this.b2Body.getPosition(), alpha );
+	}
+	
+	public void helpDrawSprite( SpriteBatch batch, Vector2 pos )
+	{
+		this.helpDrawSprite( batch, pos, 1.0f );
+	}
+	
+	public void helpDrawSprite( SpriteBatch batch, Vector2 pos, float alpha )
+	{
 		this.sprite.setOrigin( this.width / 2, this.height / 2 );
 		this.sprite.setSize( this.width, this.height );
 		this.sprite.setRotation( MathUtils.radiansToDegrees * this.b2Body.getAngle() );
 		this.sprite.setPosition( pos.x - this.width / 2, pos.y - this.height / 2 );
-		this.sprite.draw( batch );
-		
-		/*batch.draw( 
-			this.sprite, 
-			pos.x - this.width / 2, 
-			pos.y - this.height / 2, 
-			this.width, 
-			this.height
-		);*/
+		this.sprite.draw( batch, alpha );
 	}
 	
 	/**
@@ -116,6 +136,7 @@ public abstract class GameObject
 		b2FixtureDef.filter.categoryBits = categoryBits;
 		b2FixtureDef.filter.maskBits = maskBits;
 		this.b2SpriteFixture = this.b2Body.createFixture( b2FixtureDef );
+		this.b2SpriteFixture.setUserData( this );
 		
 		shape.dispose();
 	}

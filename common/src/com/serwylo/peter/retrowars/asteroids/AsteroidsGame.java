@@ -3,15 +3,25 @@ package com.serwylo.peter.retrowars.asteroids;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import retrowars.scoring.AsteroidsScore;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.collisions.DelayedCollisionProcessor;
+import com.serwylo.peter.retrowars.scores.GameScore;
 
-public class AsteroidsGame extends Game
+public class AsteroidsGame extends Game implements ContactListener
 {
 
 	// Input keys for desktop version. The Android version will use a virtual d-pad.
@@ -21,6 +31,8 @@ public class AsteroidsGame extends Game
 	private static final int KEY_SHOOT = Input.Keys.SPACE;
 	
 	private Ship ship;
+	
+	private AsteroidsScore score;
 	
 	private LinkedList<Asteroid> asteroids = new LinkedList<Asteroid>();
 	
@@ -44,15 +56,8 @@ public class AsteroidsGame extends Game
 			position.x = (float)( Math.random() * w );
 			position.y = (float)( Math.random() * h );
 		} while ( Math.abs( this.ship.getPosition().dst2( position ) ) < minDistanceFromShip2 );
-
-		// Come up with a random speed and direction, then convert it to a vector.
-		int minSpeed = 20;
-		int maxSpeed = 30;
-		int speed = (int)( Math.random() * ( maxSpeed - minSpeed ) ) + minSpeed;
-		double angle = ( Math.random() * Math.PI * 2 );
-		Vector2 velocity = new Vector2( (float)Math.cos( angle ) * speed, (float)Math.sin( angle ) * speed );
 		
-		Asteroid asteroid = new Asteroid( size, position, velocity );
+		Asteroid asteroid = new Asteroid( size, position, Asteroid.generateRandomVelocity() );
 		this.asteroids.add( asteroid );
 		return asteroid;
 	}
@@ -61,19 +66,25 @@ public class AsteroidsGame extends Game
 	protected void init( int width, int height )
 	{
 		Gdx.input.setInputProcessor( this.inputHandler );
+		this.world.setContactListener( this );
 		
 		this.updateCameraViewport( 10, 1 );
 		this.ship = new Ship();
 		
 		this.ship.getB2Body().setTransform( this.getWorldWidth() / 2, this.getWorldHeight() / 2, 0.0f );
 
-		for ( int i = 0; i < 10; i ++ )
+		for ( int i = 0; i < 1; i ++ )
 		{
 			this.createAsteroid( Asteroid.SIZE_TINY );
 			this.createAsteroid( Asteroid.SIZE_SMALL );
 			this.createAsteroid( Asteroid.SIZE_MEDIUM );
-			/*this.createAsteroid( Asteroid.SIZE_LARGE );*/
+			this.createAsteroid( Asteroid.SIZE_LARGE );
 		}
+	}
+	
+	public GameScore getScore()
+	{
+		return this.score;
 	}
 	
 	@Override
@@ -107,10 +118,10 @@ public class AsteroidsGame extends Game
 		this.ship.render( batch );
 		batch.end();
 		
-		this.renderDebug();
+		// this.renderDebug();
 	}
 
-	private InputProcessor inputHandler = new InputProcessor() {
+	private InputProcessor inputHandler = new InputAdapter() {
 			
 		@Override
 		public boolean keyDown( int keyCode ) 
@@ -132,12 +143,6 @@ public class AsteroidsGame extends Game
 				ship.turnRight( true );
 			}
 			return true;
-		}
-	
-		@Override
-		public boolean keyTyped(char arg0) 
-		{
-			return false;
 		}
 	
 		@Override
@@ -163,34 +168,97 @@ public class AsteroidsGame extends Game
 		}
 	
 		@Override
-		public boolean scrolled(int arg0) 
-		{
-			return false;
-		}
-	
-		@Override
 		public boolean touchDown( int arg0, int arg1, int arg2, int arg3 ) 
 		{
 			System.out.println( "Touch Down" );
 			return false;
 		}
-	
-		@Override
-		public boolean touchDragged(int arg0, int arg1, int arg2) 
-		{
-			return false;
-		}
-	
-		@Override
-		public boolean touchMoved(int arg0, int arg1) 
-		{
-			return false;
-		}
-	
-		@Override
-		public boolean touchUp(int arg0, int arg1, int arg2, int arg3) 
-		{
-			return false;
-		}
+		
 	};
+
+	@Override
+	public void beginContact( Contact contact ) 
+	{
+		Asteroid asteroid = null;
+		Object a = contact.getFixtureA().getUserData();
+		Object b = contact.getFixtureB().getUserData();
+		Object other = null;
+		
+		if ( a instanceof Asteroid )
+		{
+			asteroid = (Asteroid)a;
+			other = b;
+		}
+		else if ( b instanceof Asteroid )
+		{
+			 asteroid = (Asteroid)b;
+			 other = a;
+		}
+		
+		if ( other == this.ship )
+		{
+		}
+		else if ( other instanceof Bullet )
+		{
+			this.addCollisionProcessor( new AsteroidBulletCollision( asteroid, (Bullet)other ) );
+		}
+	}
+	
+	@Override
+	public void endContact( Contact contact ) 
+	{
+		
+	}
+
+	@Override
+	public void preSolve( Contact contact, Manifold oldManifold ) 
+	{
+		
+	}
+
+	@Override
+	public void postSolve( Contact contact, ContactImpulse impulse ) 
+	{
+		
+	}
+	
+	/**
+	 * The collision processors need to be subclasses, so that they can access the state of 
+	 * the world in an easy way. This processor needs to remove and (maybe) add new asteroids.
+	 */
+	public class AsteroidBulletCollision implements DelayedCollisionProcessor
+	{
+		
+		private Asteroid asteroid;
+		private Bullet bullet;
+		
+		public AsteroidBulletCollision( Asteroid asteroid, Bullet bullet )
+		{
+			this.asteroid = asteroid;
+			this.bullet = bullet;
+		}
+		
+		/**
+		 * Removes the asteroid and the bullet from the screen.
+		 * If the asteroid was not a {@link Asteroid.SIZE_TINY} asteroid, then it will be split into
+		 * more, smaller asteroids.
+		 */
+		public void process()
+		{
+			int size = this.asteroid.getSize();
+			if ( size > Asteroid.SIZE_TINY )
+			{
+				Vector2 originalVelocity = this.asteroid.getB2Body().getLinearVelocity();
+				for ( int i = 0; i < 3; i ++ )
+				{
+					Asteroid newAsteroid = new Asteroid( size - 1, this.asteroid.getB2Body().getPosition(), Asteroid.generateRandomVelocity().add( originalVelocity ) );
+					asteroids.add( newAsteroid );
+				}
+			}
+			
+			this.bullet.markForDestruction();
+			asteroids.remove( this.asteroid );
+			queueForDestruction( this.asteroid );
+		}
+	}
 }

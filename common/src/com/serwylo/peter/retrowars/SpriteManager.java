@@ -28,25 +28,25 @@ public class SpriteManager
 		Texture asteroidsTexture = new Texture( Gdx.files.internal("asteroids.png" ) );
 		TextureRegion[] asteroidRegions = {
 				
-			// Large asteroids
-			new TextureRegion( asteroidsTexture, 128, 0, 128, 128 ),
-			new TextureRegion( asteroidsTexture, 0, 128, 128, 128 ),
-			new TextureRegion( asteroidsTexture, 128, 128, 128, 128 ),
-			
-			// Medium asteroids
-			new TextureRegion( asteroidsTexture, 64, 0, 64, 64 ),
-			new TextureRegion( asteroidsTexture, 0, 64, 64, 64 ),
-			new TextureRegion( asteroidsTexture, 64, 64, 64, 64 ),
+			// Tiny asteroids
+			new TextureRegion( asteroidsTexture, 16, 0, 16, 16 ),
+			new TextureRegion( asteroidsTexture, 0, 16, 16, 16 ),
+			new TextureRegion( asteroidsTexture, 16, 16, 16, 16 ),
 			
 			// Small asteroids
 			new TextureRegion( asteroidsTexture, 32, 0, 32, 32 ),
 			new TextureRegion( asteroidsTexture, 0, 32, 32, 32 ),
 			new TextureRegion( asteroidsTexture, 32, 32, 32, 32 ),
 			
-			// Tiny asteroids
-			new TextureRegion( asteroidsTexture, 16, 0, 16, 16 ),
-			new TextureRegion( asteroidsTexture, 0, 16, 16, 16 ),
-			new TextureRegion( asteroidsTexture, 16, 16, 16, 16 )
+			// Medium asteroids
+			new TextureRegion( asteroidsTexture, 64, 0, 64, 64 ),
+			new TextureRegion( asteroidsTexture, 0, 64, 64, 64 ),
+			new TextureRegion( asteroidsTexture, 64, 64, 64, 64 ),
+			
+			// Large asteroids
+			new TextureRegion( asteroidsTexture, 128, 0, 128, 128 ),
+			new TextureRegion( asteroidsTexture, 0, 128, 128, 128 ),
+			new TextureRegion( asteroidsTexture, 128, 128, 128, 128 )
 		};
 		
 		Sprite[] sprites = new Sprite[ asteroidRegions.length ];
@@ -66,6 +66,14 @@ public class SpriteManager
 		Sprite bullet = new Sprite( bulletTexture, 0, 0, 8, 8 );
 		bullet.setOrigin( 4, 4 );
 		return bullet;
+	}
+
+	public static Sprite getParticleSprite()
+	{
+		Texture particleTexture = new Texture( Gdx.files.internal("particle.png" ) );
+		Sprite particle = new Sprite( particleTexture, 0, 0, 8, 8 );
+		particle.setOrigin( 4, 4 );
+		return particle;
 	}
 
 	public static TextureRegion[] getCityStates()

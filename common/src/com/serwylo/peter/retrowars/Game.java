@@ -1,5 +1,7 @@
 package com.serwylo.peter.retrowars;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -9,11 +11,14 @@ import com.badlogic.gdx.math.Frustum;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.serwylo.peter.retrowars.collisions.DelayedCollisionProcessor;
 import com.serwylo.peter.retrowars.collisions.ICollidable;
 import com.serwylo.peter.retrowars.collisions.QuadTree;
+import com.serwylo.peter.retrowars.scores.GameScore;
 
 public abstract class Game implements ApplicationListener
 {
@@ -31,6 +36,21 @@ public abstract class Game implements ApplicationListener
 	public World getWorld()
 	{
 		return this.world;
+	}
+	
+	/**
+	 * @see addCollisionProcessor()
+	 */
+	private ArrayList<DelayedCollisionProcessor> collisionsToProcess = new ArrayList<DelayedCollisionProcessor>( 10 );
+
+	/**
+	 * Collects processors which will deal with collisions after the physics sim has
+	 * updated. 
+	 * @see postUpdateGame()
+	 */
+	public void addCollisionProcessor( DelayedCollisionProcessor processor )
+	{
+		this.collisionsToProcess.add( processor );
 	}
 	
 	protected Vector2 worldSize = new Vector2( 0.0f, 0.0f );
@@ -77,6 +97,8 @@ public abstract class Game implements ApplicationListener
 	
 	private static Game currentGameInstance;
 	
+	private ArrayList<Body> bodiesToDestroy = new ArrayList<Body>( 100 );
+	
 	/**
 	 * Get a reference to the currently running game instance.
 	 * This is useful to get a hold of global objects such as the camera, or the Box2D world.
@@ -92,6 +114,8 @@ public abstract class Game implements ApplicationListener
 		Game.currentGameInstance = this;
 		this.debugRenderer = new Box2DDebugRenderer();
 	}
+	
+	public abstract GameScore getScore();
 	
 	@Override
 	public void create() 
@@ -124,15 +148,31 @@ public abstract class Game implements ApplicationListener
 	
 	/**
 	 * The update method for your particular game. 
-	 * This is where you should do things like update the Box2D world simulation, and process
+	 * This is where you should do things like update your objects which are not updated by Box2D (the
+	 * Box2D world is stepped before we get to the abstract {@link update()} method) process
 	 * user input. 
 	 * @param deltaTime The number of seconds since last update frame.
 	 */
 	protected abstract void update( float deltaTime );
 	
-	protected void updateGame( float deltaTime )
+	protected void preUpdateGame( float deltaTime )
 	{
 		this.world.step( deltaTime, 8, 3 );
+	}
+	
+	protected void postUpdateGame()
+	{
+		for ( DelayedCollisionProcessor processor : this.collisionsToProcess )
+		{
+			processor.process();
+		}
+		this.collisionsToProcess.clear();
+		
+		for ( Body body : this.bodiesToDestroy )
+		{
+			this.world.destroyBody( body );
+		}
+		this.bodiesToDestroy.clear();
 	}
 	
 	/**
@@ -145,8 +185,9 @@ public abstract class Game implements ApplicationListener
 	public void render()
 	{
 		float deltaTime = Gdx.graphics.getDeltaTime();
-		this.updateGame( deltaTime );
+		this.preUpdateGame( deltaTime );
 		this.update( deltaTime );
+		this.postUpdateGame();
 		
 		GL10 gl = Gdx.graphics.getGL10();
 		gl.glClear( GL10.GL_COLOR_BUFFER_BIT );
@@ -164,13 +205,13 @@ public abstract class Game implements ApplicationListener
 		this.camera.apply( Gdx.gl10 );
         this.debugRenderer.render( this.world, this.camera.combined );
         
-        Rectangle viewportRect = new Rectangle( 3, 3, this.camera.viewportWidth - 6, this.camera.viewportHeight - 6 );
+        Rectangle viewportRect = new Rectangle( 0.2f, 0.2f, this.camera.viewportWidth - 0.4f, this.camera.viewportHeight - 0.4f );
         GraphicsUtils.drawDebugRect( viewportRect, this.camera, 0.0f, 1.0f, 0.0f );
         
-        Rectangle worldRect = new Rectangle( 6, 6, this.worldSize.x - 9, this.worldSize.y - 9 );
+        Rectangle worldRect = new Rectangle( 0.3f, 0.3f, this.worldSize.x - 0.6f, this.worldSize.y - 0.6f );
         GraphicsUtils.drawDebugRect( worldRect, this.camera, 1.0f, 0.0f, 0.0f );
         
-        Rectangle screenRect = new Rectangle( 1, 1, this.camera.viewportWidth - 2, this.camera.viewportHeight - 2 );
+        Rectangle screenRect = new Rectangle( 0.1f, 0.1f, this.camera.viewportWidth - 0.2f, this.camera.viewportHeight - 0.2f );
         GraphicsUtils.drawDebugRect( screenRect, this.camera, 0.0f, 0.0f, 1.0f );
 	}
 
@@ -201,26 +242,6 @@ public abstract class Game implements ApplicationListener
 	 * It will also set the world size, which is the size of the world which fits in the available screen
 	 * real estate.
 	 * 
-	 * 
-	 *   <--- Screen: 800px, World : 40m -->
-	 * 
-	 *  +-----------------------------------+
-	 *  |                                   | ^
-	 *  |                                   | |
-	 *  |                                   | |
-	 *  |                                   | 
-	 *  |                                   | Screen: 400px
-	 *  |                                   | World: 20m
-	 *  |                                   | 
-	 *  |                                   | |
-	 *  |                                   | |
-	 *  |                                   | v
-	 *  +-----------------------------------+
-	 *  
-	 * 
-	 * 
-	 * 
-	 * 
 	 * @param pixels
 	 * @param metres
 	 */
@@ -242,7 +263,7 @@ public abstract class Game implements ApplicationListener
 		Gdx.app.log( "SCREEN", "Size: (" + w + ", " + h + ")" );		
 		Gdx.app.log( "VIEWPORT", "Size: (" + this.camera.viewportWidth + ", " + this.camera.viewportHeight + ")" );
 		
-		this.worldSize.x = this.camera.viewportHeight;
+		this.worldSize.x = this.camera.viewportWidth;
 		this.worldSize.y = this.camera.viewportHeight;
 
 		this.camera.position.x = this.worldSize.x / 2;
@@ -256,6 +277,16 @@ public abstract class Game implements ApplicationListener
 	public void resume() 
 	{
 		
+	}
+
+	public void queueForDestruction( Body b2Body ) 
+	{
+		this.bodiesToDestroy.add( b2Body );
+	}
+
+	public void queueForDestruction( GameObject object ) 
+	{
+		this.bodiesToDestroy.add( object.getB2Body() );
 	}
 
 }

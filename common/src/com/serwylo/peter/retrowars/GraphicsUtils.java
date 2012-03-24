@@ -42,24 +42,28 @@ public class GraphicsUtils
 	 * side. 
 	 * @param position
 	 */
-	public static void wrapVectorAroundScreen( Vector2 position )
+	public static void wrapObjectAroundScreen( GameObject object )
 	{
+		Vector2 position = object.getB2Body().getPosition();
+		
 		if ( position.x < 0 )
 		{
-			position.x = Gdx.graphics.getWidth();
+			position.x = Game.getInstance().getWorldWidth();
 		}
 		else if ( position.y < 0 )
 		{
-			position.y = Gdx.graphics.getHeight();
+			position.y = Game.getInstance().getWorldHeight();
 		}
-		else if ( position.x > Gdx.graphics.getWidth() )
+		else if ( position.x > Game.getInstance().getWorldWidth() )
 		{
 			position.x = 0;
 		}
-		else if ( position.y > Gdx.graphics.getHeight() )
+		else if ( position.y > Game.getInstance().getWorldHeight() )
 		{
 			position.y = 0;
 		}
+		
+		object.getB2Body().setTransform( position, object.getB2Body().getAngle() );
 	}
 	
 	/**
@@ -74,73 +78,66 @@ public class GraphicsUtils
 	 * @param position
 	 * @param batch
 	 */
-	public static void drawSpriteWithScreenWrap( Sprite sprite, Vector2 position, SpriteBatch batch )
+	public static void drawObjectWithScreenWrap( GameObject object, SpriteBatch batch )
 	{
-		float x = position.x - sprite.getWidth() / 2;
-		float y = position.y - sprite.getHeight() / 2;
+		Vector2 position = object.getB2Body().getPosition();
 		
-		sprite.setPosition( x, y );
-		sprite.draw( batch );
+		float x = position.x - object.getWidth() / 2;
+		float y = position.y - object.getHeight() / 2;
+		
+		object.helpDrawSprite( batch, position );
 		
 		// In the following comparisons, I probably should compare to just sprite.getHeight()/2 
 		// and sprite.getWidth()/2, however there is no real harm in wrapping it further than 
 		// necessary. It will just result in the sprite being drawn off screen and not being
 		// visible...
 
-		boolean crossingTop = ( y + sprite.getHeight() > Gdx.graphics.getHeight() );
-		boolean crossingBottom = ( y - sprite.getHeight() < 0 );
+		boolean crossingTop = ( y + object.getHeight() > Game.getInstance().getWorldHeight() );
+		boolean crossingBottom = ( y - object.getHeight() < 0 );
 		
-		boolean crossingRight = ( x + sprite.getWidth() > Gdx.graphics.getWidth() );
-		boolean crossingLeft = ( x - sprite.getWidth() < 0 );
+		boolean crossingRight = ( x + object.getWidth() > Game.getInstance().getWorldWidth() );
+		boolean crossingLeft = ( x - object.getWidth() < 0 );
 		
 		// Does it cross the TOP of the screen?
 		if ( crossingTop )
 		{
-			sprite.setPosition( x, y - Gdx.graphics.getHeight() );
-			sprite.draw( batch );
+			object.helpDrawSprite( batch, new Vector2( x, y - Game.getInstance().getWorldHeight() ) );
 
 			// Do we need to draw it in the opposite corner too?
 			if ( crossingLeft )
 			{
-				sprite.setPosition( x + Gdx.graphics.getWidth(), y - Gdx.graphics.getHeight() );
-				sprite.draw( batch );
+				object.helpDrawSprite( batch, new Vector2( x + Game.getInstance().getWorldWidth(), y - Game.getInstance().getWorldHeight() ) );
 			}
 			else if ( crossingRight )
 			{
-				sprite.setPosition( x - Gdx.graphics.getWidth(), y - Gdx.graphics.getHeight() );
-				sprite.draw( batch );
+				object.helpDrawSprite( batch, new Vector2( x - Game.getInstance().getWorldWidth(), y - Game.getInstance().getWorldHeight() ) );
 			}
 		}
 		// Does it cross the BOTTOM of the screen?
 		else if ( crossingBottom )
 		{
-			sprite.setPosition( x, y + Gdx.graphics.getHeight() );
-			sprite.draw( batch );
-
+			object.helpDrawSprite( batch, new Vector2( x, y + Game.getInstance().getWorldHeight() ) );
+			
 			// Do we need to draw it in the opposite corner too?
 			if ( crossingLeft )
 			{
-				sprite.setPosition( x + Gdx.graphics.getWidth(), y + Gdx.graphics.getHeight() );
-				sprite.draw( batch );
+				object.helpDrawSprite( batch, new Vector2( x + Game.getInstance().getWorldWidth(), y + Game.getInstance().getWorldHeight() ) );
 			}
 			else if ( crossingRight )
 			{
-				sprite.setPosition( x - Gdx.graphics.getWidth(), y + Gdx.graphics.getHeight() );
-				sprite.draw( batch );
+				object.helpDrawSprite( batch, new Vector2( x - Game.getInstance().getWorldWidth(), y + Game.getInstance().getWorldHeight() ) );
 			}
 		}
 		
 		// Does it cross the RIGHT of the screen?
 		if ( crossingRight )
 		{
-			sprite.setPosition( x - Gdx.graphics.getWidth(), y );
-			sprite.draw( batch );
+			object.helpDrawSprite( batch, new Vector2( x - Game.getInstance().getWorldWidth(), y ) );
 		}
 		// Does it cross the LEFT of the screen?
 		else if ( crossingLeft )
 		{
-			sprite.setPosition( x + Gdx.graphics.getWidth(), y );
-			sprite.draw( batch );
+			object.helpDrawSprite( batch, new Vector2( x + Game.getInstance().getWorldWidth(), y ) );
 		}
 		
 	}

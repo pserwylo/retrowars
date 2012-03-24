@@ -1,9 +1,14 @@
 package com.serwylo.peter.retrowars.asteroids;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -55,7 +60,11 @@ public class Ship extends GameObject
 	
 	private boolean isThrusting = false, isTurningRight = false, isTurningLeft = false, isFiring = false;
 	
-	private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+	private LinkedList<Bullet> bullets = new LinkedList<Bullet>();
+	
+	private ParticleEmitter particles;
+	
+	private Sprite particleSprite;
 	
 	public Ship()
 	{
@@ -64,6 +73,16 @@ public class Ship extends GameObject
 		shape.setAsBox( 0.5f, 1.0f );
 		this.helpInit( new Vector2( 1.0f, 2.0f ), new Vector2( 200, 10 ), shape, Ship.CATEGORY_BIT, Asteroid.CATEGORY_BIT );
 		this.b2Body.setAngularDamping( 10.0f );
+		
+		try
+		{
+			this.particles = new ParticleEmitter( Gdx.files.internal( "particles" ).reader( 1024 ) );
+			this.particles.setSprite( SpriteManager.getParticleSprite() );
+		}
+		catch ( IOException ioe )
+		{
+			
+		}
 	}
 	
 	public void thrust( boolean toggle )
@@ -73,11 +92,14 @@ public class Ship extends GameObject
 		{
 			// Limit the speed while we are accelerating...
 			this.b2Body.setLinearDamping( 1.0f );
+			this.particles.start();
+			this.particles.setSprite( SpriteManager.getParticleSprite() );
 		}
 		else
 		{
 			// But once we stop accelerating, we just want to float...
 			this.b2Body.setLinearDamping( 0.0f );
+			this.particles.allowCompletion();
 		}
 	}
 	
@@ -100,7 +122,7 @@ public class Ship extends GameObject
 	@Override
 	public void update( float delta )
 	{
-		GraphicsUtils.wrapVectorAroundScreen( this.b2Body.getPosition() );
+		GraphicsUtils.wrapObjectAroundScreen( this );
 		
 		if ( this.isFiring )
 		{
@@ -111,7 +133,11 @@ public class Ship extends GameObject
 		{
 			float angle = MathUtils.radiansToDegrees * this.b2Body.getAngle() + 90;
 			Vector2 force = new Vector2( Ship.ACCELERATION, 0 ).rotate( angle );
-			this.b2Body.applyForceToCenter( force ); 
+			this.b2Body.applyForceToCenter( force );
+			
+			Vector2 pos = this.b2Body.getPosition();
+			this.particles.setPosition( pos.x, pos.y );
+			this.particles.update( delta );
 		}
 
 		if ( this.isTurningLeft )
@@ -122,6 +148,17 @@ public class Ship extends GameObject
 		if ( this.isTurningRight )
 		{
 			this.b2Body.applyAngularImpulse( -ROTATE_SPEED );
+		}
+		
+		Iterator<Bullet> it = this.bullets.iterator();
+		while ( it.hasNext() )
+		{
+			Bullet bullet = it.next();
+			bullet.update( delta );
+			if ( !bullet.isAlive() )
+			{
+				it.remove();
+			}
 		}
 	
 	}
@@ -170,11 +207,13 @@ public class Ship extends GameObject
 		{
 			bullet.render( batch );
 		}
+		
+		this.particles.draw( batch );
 	}
 
 	public Vector2 getPosition() 
 	{
 		return this.b2Body.getPosition();
 	}
-	
+
 }

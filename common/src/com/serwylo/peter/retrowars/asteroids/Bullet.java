@@ -18,7 +18,7 @@ public class Bullet extends GameObject
 	 */
 	public static final short CATEGORY_BIT = 2; 
 	
-	public static final int SPEED = 50;
+	public static final int SPEED = 25;
 	
 	/**
 	 * Number of milliseconds the bullet is alive for. When it has been around for this long,
@@ -37,7 +37,7 @@ public class Bullet extends GameObject
 	
 	private long birthTime;
 	
-	private boolean isAlive;
+	private boolean isAlive = true;
 	
 	/**
 	 * 
@@ -74,6 +74,11 @@ public class Bullet extends GameObject
 		return this.isAlive;
 	}
 	
+	public void markForDestruction()
+	{
+		this.isAlive = false;
+	}
+	
 	/**
 	 * Updates the position of the bullet, and marks it as ready to remove if
 	 * it has lived for a certain period of time...
@@ -83,22 +88,27 @@ public class Bullet extends GameObject
 	 */
 	public void update( float deltaTime )
 	{
-		// GraphicsUtils.wrapVectorAroundScreen( this.b2Body.getPosition() );
-		// this.b2Body.applyForceToCenter( this.force );
-		// this.isAlive = ( ( System.currentTimeMillis() < this.birthTime + LIFE ) );
+		if ( this.isAlive )
+		{
+			GraphicsUtils.wrapObjectAroundScreen( this );
+			this.isAlive = ( ( System.currentTimeMillis() < this.birthTime + LIFE ) );
+		}
+
+		if ( !this.isAlive )
+		{
+			Game.getInstance().queueForDestruction( this.b2Body );
+		}
 	}
 	
 	public void render( SpriteBatch batch )
 	{
-		// bulletSprite.setPosition( this.b2Body.getPosition().x - bulletSprite.getWidth() / 2, this.b2Body.getPosition().y - bulletSprite.getHeight() / 2 );
 		long age = System.currentTimeMillis() - this.birthTime;
 		float alpha = 1.0f;
 		if ( age > FADE_AFTER )
 		{
 			alpha = (float)( LIFE - age )  / FADE_AFTER;
 		}
-		// bulletSprite.draw( batch, alpha );
-		this.helpDrawSprite( batch );
+		this.helpDrawSprite( batch, alpha );
 	}
 	
 }

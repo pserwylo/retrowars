@@ -15,7 +15,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.serwylo.peter.retrowars.Game;
 import com.serwylo.peter.retrowars.HUD;
-import com.serwylo.peter.retrowars.collisions.DelayedCollisionProcessor;
+import com.serwylo.peter.retrowars.collisions.DelayedPhysicsProcessor;
 import com.serwylo.peter.retrowars.scores.GameScore;
 
 public class AsteroidsGame extends Game implements ContactListener
@@ -197,7 +197,7 @@ public class AsteroidsGame extends Game implements ContactListener
 		}
 		else if ( other instanceof Bullet )
 		{
-			this.addCollisionProcessor( new AsteroidBulletCollision( asteroid, (Bullet)other ) );
+			this.addDelayedProcessor( new AsteroidBulletCollision( asteroid, (Bullet)other ) );
 		}
 	}
 	
@@ -223,7 +223,7 @@ public class AsteroidsGame extends Game implements ContactListener
 	 * The collision processors need to be subclasses, so that they can access the state of 
 	 * the world in an easy way. This processor needs to remove and (maybe) add new asteroids.
 	 */
-	public class AsteroidBulletCollision implements DelayedCollisionProcessor
+	public class AsteroidBulletCollision implements DelayedPhysicsProcessor
 	{
 		
 		private Asteroid asteroid;

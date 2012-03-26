@@ -1,10 +1,13 @@
 package com.serwylo.peter.retrowars.missileCommand;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.serwylo.peter.retrowars.AssetManager;
+import com.serwylo.peter.retrowars.Game;
 import com.serwylo.peter.retrowars.GameObject;
 import com.serwylo.peter.retrowars.collisions.ICollidable;
 
@@ -20,7 +23,7 @@ public class FriendlyMissile extends GameObject
 
 	public static final short CATEGORY_BIT = 8;
 	
-	public static final float SPEED = 0.01f;
+	public static final float SPEED = 0.05f;
 	
 	private boolean isAlive = true;
 	
@@ -38,17 +41,16 @@ public class FriendlyMissile extends GameObject
 		{
 			bulletSprite = AssetManager.getBulletSprite();
 		}
-		
 		this.setSprite( bulletSprite );
 	
 		Vector2 size = new Vector2( 0.1f, 0.1f );
-		
-		this.helpInit( size, start.cpy() );
+		this.helpInit( size, start.cpy(), FriendlyMissile.CATEGORY_BIT, Missile.CATEGORY_BIT );
 		
 		Vector2 impulse = start.cpy().rotate( 180 ).add( target );
 		impulse.nor();
 		impulse.x *= SPEED;
 		impulse.y *= SPEED;
+		
 		this.b2Body.applyLinearImpulse( impulse, start );
 	}
 	
@@ -73,6 +75,7 @@ public class FriendlyMissile extends GameObject
 		else
 		{
 			// Notify the game, so that it can replace me with an explosion.
+			Game.getInstance().queueForDestruction( this );
 			this.isAlive = false;
 		}
 	}

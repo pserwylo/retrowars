@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.serwylo.peter.retrowars.collisions.DelayedCollisionProcessor;
+import com.serwylo.peter.retrowars.collisions.DelayedPhysicsProcessor;
 import com.serwylo.peter.retrowars.scores.GameScore;
 
 public abstract class Game implements ApplicationListener
@@ -36,14 +36,14 @@ public abstract class Game implements ApplicationListener
 	/**
 	 * @see addCollisionProcessor()
 	 */
-	private ArrayList<DelayedCollisionProcessor> collisionsToProcess = new ArrayList<DelayedCollisionProcessor>( 10 );
+	private ArrayList<DelayedPhysicsProcessor> collisionsToProcess = new ArrayList<DelayedPhysicsProcessor>( 10 );
 
 	/**
 	 * Collects processors which will deal with collisions after the physics sim has
 	 * updated. 
 	 * @see postUpdateGame()
 	 */
-	public void addCollisionProcessor( DelayedCollisionProcessor processor )
+	public void addDelayedProcessor( DelayedPhysicsProcessor processor )
 	{
 		this.collisionsToProcess.add( processor );
 	}
@@ -160,7 +160,7 @@ public abstract class Game implements ApplicationListener
 	{
 		// We should execute these processors before destroying bodies, because they will often
 		// request bodies to be destroyed, and we cbf waiting until the next cycle to destroy them...
-		for ( DelayedCollisionProcessor processor : this.collisionsToProcess )
+		for ( DelayedPhysicsProcessor processor : this.collisionsToProcess )
 		{
 			processor.process();
 		}

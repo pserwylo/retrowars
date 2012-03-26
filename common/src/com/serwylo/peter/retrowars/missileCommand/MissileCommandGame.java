@@ -17,11 +17,13 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.HUD;
 import com.serwylo.peter.retrowars.asteroids.Asteroid;
 import com.serwylo.peter.retrowars.asteroids.Bullet;
 import com.serwylo.peter.retrowars.asteroids.AsteroidsGame.AsteroidBulletCollision;
-import com.serwylo.peter.retrowars.collisions.DelayedCollisionProcessor;
+import com.serwylo.peter.retrowars.collisions.DelayedPhysicsProcessor;
 import com.serwylo.peter.retrowars.scores.GameScore;
+import com.serwylo.peter.retrowars.scores.ScoreItem;
 
 public class MissileCommandGame extends Game 
 {
@@ -42,6 +44,7 @@ public class MissileCommandGame extends Game
 	private ArrayList<City> aliveCities;
 	private ArrayList<City> cities;
 	private ArrayList<Tower> towers;
+	private ArrayList<Explosion> explosions;
 	
 	private LinkedList<Missile> enemyMissiles = new LinkedList<Missile>();
 	private LinkedList<FriendlyMissile> friendlyMissiles = new LinkedList<FriendlyMissile>();
@@ -58,6 +61,8 @@ public class MissileCommandGame extends Game
 		Gdx.input.setInputProcessor( this.inputProcessor );
 		this.world.setContactListener( this.contactListener );
 		this.updateCameraViewport( 32, 1 );
+		
+		this.explosions = new ArrayList<Explosion>( 10 );
 		
 		this.cities = new ArrayList<City>( 4 );
 		this.aliveCities = new ArrayList<City>( 4 );
@@ -143,7 +148,19 @@ public class MissileCommandGame extends Game
 			missile.update( delta );
 			if ( !missile.isAlive() )
 			{
+				this.addDelayedProcessor( new ExplosionProcessor( missile ) );
 				it.remove();
+			}
+		}
+		
+		Iterator<Explosion> explosionIt = this.explosions.iterator();
+		while ( explosionIt.hasNext() )
+		{
+			Explosion explosion = explosionIt.next();
+			explosion.update( delta );
+			if ( !explosion.isAlive() )
+			{
+				explosionIt.remove();
 			}
 		}
 	}
@@ -244,6 +261,8 @@ public class MissileCommandGame extends Game
 		batch.end();
 		
 		this.renderDebug();
+		
+		HUD.render( this );
 	}
 	
 	private ContactListener contactListener = new ContactListener() 
@@ -279,7 +298,11 @@ public class MissileCommandGame extends Game
 			
 			if ( other instanceof City )
 			{
-				addCollisionProcessor( new MissileCityDelayedProcessor( missile, (City)other ) );
+				addDelayedProcessor( new MissileCityDelayedProcessor( missile, (City)other ) );
+			}
+			else if ( other instanceof Explosion )
+			{
+				addDelayedProcessor( new ExplosionMissileProcessor( (Explosion)other, missile ) );
 			}
 		}
 	};
@@ -299,12 +322,54 @@ public class MissileCommandGame extends Game
 	};
 
 	/**
+	 * When a {@link FriendlyMissile} reaches its destination, remove it from the game and replace
+	 * it with an {@link Explosion} which will grow slowly.
+	 */
+	private class ExplosionProcessor implements DelayedPhysicsProcessor
+	{
+		
+		private FriendlyMissile source;
+		
+		public ExplosionProcessor( FriendlyMissile source )
+		{
+			this.source = source;
+		}
+		
+		public void process()
+		{
+			Explosion explosion = new Explosion( this.source.getB2Body().getPosition() );
+			explosions.add( explosion );
+		}
+		
+	}
+	
+	private class ExplosionMissileProcessor implements DelayedPhysicsProcessor
+	{
+		
+		private Explosion explosion;
+		
+		private Missile missile;
+		
+		public ExplosionMissileProcessor( Explosion explosion, Missile missile )
+		{
+			this.explosion = explosion;
+			this.missile = missile;
+		}
+		
+		public void process()
+		{
+			score.addScore( new ScoreItem( 10000, this.missile.getB2Body().getPosition().cpy() ) );
+			this.missile.markForDestruction();
+		}
+	}
+	
+	/**
 	 * Created to deal with when an enemy missile reaches its destination.
 	 * Tells the city it has been hit.
 	 * Removes the city from list of aliveCities if it has just been killed. 
 	 * Adds some graphical and audio feedback.
 	 */	
-	private class MissileCityDelayedProcessor implements DelayedCollisionProcessor
+	private class MissileCityDelayedProcessor implements DelayedPhysicsProcessor
 	{
 
 		private Missile missile;
@@ -320,7 +385,6 @@ public class MissileCommandGame extends Game
 		@Override
 		public void process() 
 		{
-			Gdx.app.log( "HIT", "City, missile" );
 			this.missile.markForDestruction();
 			
 			boolean wasAlive = city.isAlive();

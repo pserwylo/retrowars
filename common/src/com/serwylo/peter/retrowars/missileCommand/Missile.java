@@ -36,7 +36,7 @@ public class Missile extends GameObject
 
 		Vector2 position = start.cpy();
 		Vector2 size = new Vector2( 0.1f, 0.1f );
-		this.helpInit( size, position, Missile.CATEGORY_BIT, City.CATEGORY_BIT );
+		this.helpInit( size, position, Missile.CATEGORY_BIT, (short)( City.CATEGORY_BIT | Explosion.CATEGORY_BIT ) );
 
 		Vector2 impulse = start.cpy().rotate( 180 ).add( target.getB2Body().getPosition() );
 		impulse.nor();

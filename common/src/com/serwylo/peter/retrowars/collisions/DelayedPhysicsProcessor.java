@@ -6,7 +6,7 @@ package com.serwylo.peter.retrowars.collisions;
  * create objects which contain typed information about the things colliding, and process
  * them after the Box2D world has finished stepping.
  */
-public interface DelayedCollisionProcessor 
+public interface DelayedPhysicsProcessor 
 {
 	
 	public void process();

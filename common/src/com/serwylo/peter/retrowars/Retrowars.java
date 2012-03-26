@@ -2,6 +2,7 @@ package com.serwylo.peter.retrowars;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.serwylo.peter.retrowars.asteroids.AsteroidsGame;
+import com.serwylo.peter.retrowars.missileCommand.MissileCommandGame;
 
 public class Retrowars implements ApplicationListener 
 {
@@ -12,7 +13,7 @@ public class Retrowars implements ApplicationListener
 	public void create() 
 	{
 		// Gdx.input = new RemoteInput();
-		this.game = new AsteroidsGame();
+		this.game = new MissileCommandGame();
 		this.game.create();
 	}
 

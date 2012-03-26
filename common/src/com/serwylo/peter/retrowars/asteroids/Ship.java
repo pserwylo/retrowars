@@ -1,22 +1,19 @@
 package com.serwylo.peter.retrowars.asteroids;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.serwylo.peter.retrowars.AssetManager;
 import com.serwylo.peter.retrowars.GameObject;
 import com.serwylo.peter.retrowars.GraphicsUtils;
-import com.serwylo.peter.retrowars.SpriteManager;
 
 /**
  * @author Peter Serwylo
@@ -42,10 +39,15 @@ public class Ship extends GameObject
 	private long lastFireTime = 0;
 	
 	/**
-	 * Maximum velocity the speed can take. 
-	 * I am unsure of the units yet, right now its just pixels...
+	 * Impacts the maximum velocity the speed can take, by restricting the terminal velocity.
+	 * I'm unsure as to the exact conversion from this to max speed though.
 	 */
-	private static final int MAX_SPEED = 5;
+	private static final float LINEAR_DAMPENING = 5.0f;
+	
+	/**
+	 * Impacts the maximum rotational speed when turning.
+	 */
+	private static final float ANGULAR_DAMPENING = 15.0f;
 	
 	/**
 	 * Acceleration of the ship. As with MAX_SPEED, the units it is in are currently
@@ -64,20 +66,18 @@ public class Ship extends GameObject
 	
 	private ParticleEmitter particles;
 	
-	private Sprite particleSprite;
-	
 	public Ship()
 	{
-		this.sprite = SpriteManager.getShipSprite();
+		this.sprite = AssetManager.getShipSprite();
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox( 0.5f, 1.0f );
 		this.helpInit( new Vector2( 1.0f, 2.0f ), new Vector2( 200, 10 ), shape, Ship.CATEGORY_BIT, Asteroid.CATEGORY_BIT );
-		this.b2Body.setAngularDamping( 10.0f );
+		this.b2Body.setAngularDamping( ANGULAR_DAMPENING );
 		
 		try
 		{
 			this.particles = new ParticleEmitter( Gdx.files.internal( "particles" ).reader( 1024 ) );
-			this.particles.setSprite( SpriteManager.getParticleSprite() );
+			this.particles.setSprite( AssetManager.getParticleSprite() );
 		}
 		catch ( IOException ioe )
 		{
@@ -91,9 +91,9 @@ public class Ship extends GameObject
 		if ( this.isThrusting )
 		{
 			// Limit the speed while we are accelerating...
-			this.b2Body.setLinearDamping( 1.0f );
+			this.b2Body.setLinearDamping( LINEAR_DAMPENING );
 			this.particles.start();
-			this.particles.setSprite( SpriteManager.getParticleSprite() );
+			this.particles.setSprite( AssetManager.getParticleSprite() );
 		}
 		else
 		{
@@ -137,8 +137,9 @@ public class Ship extends GameObject
 			
 			Vector2 pos = this.b2Body.getPosition();
 			this.particles.setPosition( pos.x, pos.y );
-			this.particles.update( delta );
 		}
+		
+		this.particles.update( delta );
 
 		if ( this.isTurningLeft )
 		{
@@ -194,15 +195,8 @@ public class Ship extends GameObject
 	@Override
 	public void render( SpriteBatch batch ) 
 	{
-		// this.sprite.setRotation( MathUtils.radiansToDegrees * this.b2Body.getAngle() + 90 );
-		// this.sprite.setPosition( this.b2Body.getPosition().x, this.b2Body.getPosition().y );
-		// this.sprite.setSize( 0.5f, 1.0f );
-		// this.sprite.draw( batch );
-		
 		this.helpDrawSprite( batch );
 		
-		// GraphicsUtils.drawSpriteWithScreenWrap( this.sprite, this.b2Body.getPosition(), batch );
-
 		for ( Bullet bullet : this.bullets )
 		{
 			bullet.render( batch );

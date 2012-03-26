@@ -1,19 +1,23 @@
 package com.serwylo.peter.retrowars.missileCommand;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.serwylo.peter.retrowars.SpriteManager;
+import com.serwylo.peter.retrowars.AssetManager;
+import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.GameObject;
 
-public class City extends Actor
+public class City extends GameObject
 {
+
+	public static final short CATEGORY_BIT = 1;
 
 	private static final int CITY_HEALTH = 3;
 	
 	private static TextureRegion[] cityStateTextures;
-	
-	private Vector2 position;
 	
 	private int health = CITY_HEALTH;
 	
@@ -23,11 +27,21 @@ public class City extends Actor
 	 */
 	public City( int x )
 	{
-		this.position = new Vector2( x, 10 );
 		if ( cityStateTextures == null )
 		{
-			cityStateTextures = SpriteManager.getCityStates();
+			cityStateTextures = AssetManager.getCityStates();
 		}
+		
+		this.setSprite( cityStateTextures[ 0 ] );
+
+		Vector2 position = new Vector2( x, 1.0f );
+		Vector2 size = new Vector2( 1.0f, 1.0f );
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox( size.x / 2, size.y / 2 );
+		
+		this.helpInit( size, position, shape, City.CATEGORY_BIT, Missile.CATEGORY_BIT );
+		this.b2SpriteFixture.setSensor( true );
+		
 	}
 	
 	/**
@@ -57,47 +71,21 @@ public class City extends Actor
 		{
 			this.health --;
 		}
-	}
-	
-	/**
-	 * The current position of this city.
-	 * @return
-	 */
-	public Vector2 getPosition()
-	{
-		return this.position;
+
+		int index = CITY_HEALTH - this.health;
+		this.setSprite( cityStateTextures[ index ] );
 	}
 	
 	@Override
-	public void draw( SpriteBatch batch, float parentAlpha ) 
+	public void render( SpriteBatch batch ) 
 	{
-		int index = CITY_HEALTH - health;
-		TextureRegion toDraw = cityStateTextures[ index ];
-		batch.draw( toDraw, this.position.x - toDraw.getRegionWidth()/2, this.position.y );
+		this.helpDrawSprite( batch );
 	}
 
 	@Override
-	public boolean touchDown( float x, float y, int pointer ) 
-	{
-		return false;
-	}
-
-	@Override
-	public void touchUp( float x, float y, int pointer ) 
+	public void update( float deltaTime ) 
 	{
 		
-	}
-
-	@Override
-	public void touchDragged( float x, float y, int pointer ) 
-	{
-		
-	}
-
-	@Override
-	public Actor hit( float x, float y ) 
-	{
-		return null;
 	}
 
 }

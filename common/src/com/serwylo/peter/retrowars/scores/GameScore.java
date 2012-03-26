@@ -1,173 +1,55 @@
 package com.serwylo.peter.retrowars.scores;
 
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
-import com.serwylo.peter.retrowars.Game;
+public class GameScore 
+{
+	
+	public final static int SHOW_SCORE_DURATION = 750;
+	
+	protected List<ScoreItem> scores = new LinkedList<ScoreItem>();
+	
+	/**
+	 * As we add new scores, we will add to the total score.
+	 */
+	protected double totalScore = 0.0f;
+	
+	public void addScore( ScoreItem score )
+	{
+		this.scores.add( score );
+		this.totalScore += score.getScore();
+	}
+	
+	public double getTotalScore()
+	{
+		return this.totalScore;
+	}
+	
+	public List<ScoreItem> getScores()
+	{
+		return this.scores;
+	}
+	
+	/**
+	 * TODO: I'm torn here, because the HUD should be the one who decides how long a score is displayed for,
+	 * but the game score should be responsible for keeping a list of scores to display. That means
+	 * that the HUD would have to be removing items from our list here...
+	 * @param delta
+	 */
+	public void update( float delta )
+	{
+		Iterator<ScoreItem> it = this.scores.iterator();
+		while ( it.hasNext() )
+		{
+			ScoreItem score = it.next();
+			boolean alive = System.currentTimeMillis() - score.getCreatedTime() < SHOW_SCORE_DURATION;
+			if ( !alive )
+			{
+				it.remove();
+			}	
+		}
+	}
 
-public abstract class GameScore
-{	
-	/**
-	 * I don't like ever loosing data, so all the scores will be kept here incase they are ever needed...
-	 * But it should not be iterated over each game, because that could have major scaling issues.
-	 */
-	private ArrayList<ScoreItem> scores;
-	private ArrayList<ComboItem> combos;
-
-	/**
-	 * List of scores that are part of the current combo...
-	 */
-	protected ComboItem currentCombo;
-	
-	/**
-	 * So that we do not iterate over the entire list each loop, just render what needs to be...
-	 */
-	private ArrayList<ScoreItem> scoresToRender;
-	private ArrayList<ComboItem> combosToRender;
-	
-	/**
-	 * This score represents the level a player can achieve.
-	 * Remember, high scores make players happy, so lots of zero's!
-	 * 
-	 * TODO: Write in generalised standardisation rules in this javadoc block so that developers of other games generate about the same scores regardless of the gameplay. 
-	 */
-	protected long score = 0;
-	
-	/**
-	 * Are we currently in a combo?
-	 */
-	protected boolean comboing = false;
-	
-	protected int comboLength = 5;
-	
-	public final static int COMBO_RENDER_TIME = 200;
-	
-	private Game owner;
-	
-	public GameScore( Game owner )
-	{
-		this.owner = owner;
-		scores = new ArrayList<ScoreItem>();
-		combos = new ArrayList<ComboItem>();
-		currentCombo = new ComboItem(this);
-		scoresToRender = new ArrayList<ScoreItem>();
-		combosToRender = new ArrayList<ComboItem>();
-	}
-	
-	/**
-	 * Each subclass of Score should feel free to implement its own scoring system to make life easier.
-	 * When the actual RetroWars qualified score is expected, the subclasses score should be converted to
-	 * a score that is fair and just in the RetroWars scoring scheme.
-	 * 
-	 * If a different scoring system is not required, just return <i>score</i>.
-	 * 
-	 * @return A normailsed score for the given game.
-	 */
-	protected abstract long normaliseScore();
-	
-	/**
-	 * Games will have different kinds of combos, this is a way to specify
-	 * what a good length for a combo is for a particular game.
-	 * 
-	 * @return Minimum length of a combo...
-	 */
-	protected abstract double comboNormaliser();
-    
-	/**
-	 * Get the score from this object.
-	 * @return Score for the associated game.
-	 */
-	public final long getScore()
-	{
-		return score;
-	}
-	
-	/**
-	 * Gives a list of all score items in the game.
-	 * @return List of all score items.
-	 */
-	public final ArrayList<ScoreItem> getScoreItems()
-	{
-		return scores;
-	}
-	
-	/**
-	 * Gives a list of all score items in the game.
-	 * @return List of all score items.
-	 */
-	public final ArrayList<ComboItem> getComboItems()
-	{
-		return combos;
-	}
-	
-	public final ComboItem getCurrentCombo() {
-		return currentCombo;
-	}
-	
-	public abstract long getComboTime();
-	
-	protected final void clearCombo(boolean keep)
-	{
-		if (keep)
-		{	
-			combosToRender.add(currentCombo);
-			combos.add(currentCombo);
-			owner.triggerServerEvent((int)(currentCombo.size()*comboNormaliser()));
-		}
-		comboing = false;
-		currentCombo = null;
-	}
-	
-	/**
-	 * Append another score item to the currently running combo.
-	 * @param score The score item to be added...
-	 * @param comboFlag If set to true, this ScoreItem is added to the current combo. 
-	 */
-	protected void addScore(ScoreItem score)
-	{
-		scores.add(score);
-		scoresToRender.add(score);
-		if (comboing)
-		{
-			currentCombo.addScore(score);
-		}
-		else
-		{
-			comboing = true;
-			currentCombo = new ComboItem(this);
-			currentCombo.addScore(score);
-		}
-	}
-	
-	abstract void checkCombo();
-	
-	/**
-	 * The current combo for this game score object.
-	 * @return Vector of score items that are in a combo.
-	 */
-	public final ArrayList<ComboItem> getCombosToRender()
-	{
-		return combosToRender;
-	}
-	
-	/**
-	 * Return all the scores that need to be rendered on screen...
-	 * @return Scores which want attention...
-	 */
-	public final ArrayList<ScoreItem> getScoresToRender()
-	{
-		return scoresToRender;
-	}
-	
-	public final String getFormattedScore()
-	{
-		long playScore = score;
-		String formatted = "";
-		while (playScore >= 1000)
-		{
-			formatted = "," + playScore % 1000 + formatted;
-			playScore /= 1000;
-		}
-		formatted = playScore + formatted;
-		return formatted;
-	}
 }

@@ -1,33 +1,33 @@
 package com.serwylo.peter.retrowars.scores;
 
-/**
- * Keeps track of an individual score item, for use in a {@link ComboItem}.
- */
-public class ScoreItem
+import com.badlogic.gdx.math.Vector2;
+
+public class ScoreItem 
 {
+
+	protected double score;
 	
-	private int value;
+	protected Vector2 location;
 	
-	private long createdTime;
+	protected long createdTime;
 	
-	public ScoreItem( int value )
+	public ScoreItem( double score, Vector2 location )
 	{
-		this.value = value;
+		this.score = score;
+		this.location = location.cpy();
 		this.createdTime = System.currentTimeMillis();
 	}
-    
-	/**
-	 * The number of points for this score item.
-	 */
-	public int getValue()
+	
+	public double getScore()
 	{
-		return this.value;
+		return this.score;
 	}
 	
-	/**
-	 * Time that the score was created/added to the game.
-	 * That is, when the player caused this score to be created.
-	 */
+	public Vector2 getLocation()
+	{
+		return this.location;
+	}
+	
 	public long getCreatedTime()
 	{
 		return this.createdTime;

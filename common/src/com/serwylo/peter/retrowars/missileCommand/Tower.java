@@ -4,14 +4,15 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.serwylo.peter.retrowars.SpriteManager;
+import com.serwylo.peter.retrowars.AssetManager;
+import com.serwylo.peter.retrowars.GameObject;
 
-public class Tower extends Actor
+public class Tower extends GameObject
 {
 
+	public static final short CATEGORY_BIT = 2;
+
 	private static Sprite towerSprite;
-	
-	private Vector2 position;
 	
 	private long timeSinceLastFire = 0;
 	
@@ -23,11 +24,12 @@ public class Tower extends Actor
 	 */
 	public Tower( int x )
 	{
-		this.position = new Vector2( x, 10 );
 		if ( towerSprite == null )
 		{
-			towerSprite = SpriteManager.getTowerSprite();
+			towerSprite = AssetManager.getTowerSprite();
 		}
+		this.sprite = towerSprite;
+		this.helpInit( new Vector2( 1.0f, 1.0f ), new Vector2( x, 1.0f ) );
 	}
 	
 	/**
@@ -47,44 +49,16 @@ public class Tower extends Actor
 		this.timeSinceLastFire = System.currentTimeMillis();
 	}
 	
-	/**
-	 * The current position of this tower.
-	 * @return
-	 */
-	public Vector2 getPosition()
-	{
-		return this.position;
-	}
-	
 	@Override
-	public void draw( SpriteBatch batch, float parentAlpha ) 
+	public void render( SpriteBatch batch ) 
 	{
-		towerSprite.setPosition( this.position.x, this.position.y );
-		towerSprite.draw( batch );
+		this.helpDrawSprite( batch );
 	}
 
 	@Override
-	public boolean touchDown( float x, float y, int pointer ) 
-	{
-		return false;
-	}
-
-	@Override
-	public void touchUp( float x, float y, int pointer ) 
+	public void update( float deltaTime ) 
 	{
 		
-	}
-
-	@Override
-	public void touchDragged( float x, float y, int pointer ) 
-	{
-		
-	}
-
-	@Override
-	public Actor hit( float x, float y ) 
-	{
-		return null;
 	}
 
 }

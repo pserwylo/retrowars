@@ -1,7 +1,9 @@
 package com.serwylo.peter.retrowars;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -57,6 +59,16 @@ public abstract class GameObject
 		return this.sprite;
 	}
 	
+	public void setSprite( Sprite sprite )
+	{
+		this.sprite = sprite;
+	}
+	
+	public void setSprite( TextureRegion region )
+	{
+		this.sprite = new Sprite( region );
+	}
+	
 	public float getWidth()
 	{
 		return this.width;
@@ -89,6 +101,8 @@ public abstract class GameObject
 		this.sprite.setRotation( MathUtils.radiansToDegrees * this.b2Body.getAngle() );
 		this.sprite.setPosition( pos.x - this.width / 2, pos.y - this.height / 2 );
 		this.sprite.draw( batch, alpha );
+		// Gdx.app.log( "SIZE", "(" + this.width + ", " + this.height + ")" );
+		// Gdx.app.log( "POS", "(" + ( pos.x - this.width / 2 ) + ", " + ( pos.y - this.height / 2 ) + ")" );
 	}
 	
 	/**

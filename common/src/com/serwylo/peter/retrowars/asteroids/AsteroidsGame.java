@@ -3,21 +3,18 @@ package com.serwylo.peter.retrowars.asteroids;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import retrowars.scoring.AsteroidsScore;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.HUD;
 import com.serwylo.peter.retrowars.collisions.DelayedCollisionProcessor;
 import com.serwylo.peter.retrowars.scores.GameScore;
 
@@ -32,7 +29,7 @@ public class AsteroidsGame extends Game implements ContactListener
 	
 	private Ship ship;
 	
-	private AsteroidsScore score;
+	private AsteroidsScore score = new AsteroidsScore();
 	
 	private LinkedList<Asteroid> asteroids = new LinkedList<Asteroid>();
 	
@@ -73,10 +70,10 @@ public class AsteroidsGame extends Game implements ContactListener
 		
 		this.ship.getB2Body().setTransform( this.getWorldWidth() / 2, this.getWorldHeight() / 2, 0.0f );
 
-		for ( int i = 0; i < 1; i ++ )
+		for ( int i = 0; i < 5; i ++ )
 		{
-			this.createAsteroid( Asteroid.SIZE_TINY );
-			this.createAsteroid( Asteroid.SIZE_SMALL );
+			// this.createAsteroid( Asteroid.SIZE_TINY );
+			// this.createAsteroid( Asteroid.SIZE_SMALL );
 			this.createAsteroid( Asteroid.SIZE_MEDIUM );
 			this.createAsteroid( Asteroid.SIZE_LARGE );
 		}
@@ -105,9 +102,7 @@ public class AsteroidsGame extends Game implements ContactListener
 	{
 		super.render();
 
-		SpriteBatch batch = new SpriteBatch();
-		batch.setProjectionMatrix( this.camera.projection );
-		batch.setTransformMatrix( this.camera.view );
+		SpriteBatch batch = this.createSpriteBatch();
 		batch.begin();
 		Iterator<Asteroid> it = this.asteroids.iterator();
 		while ( it.hasNext() )
@@ -117,6 +112,8 @@ public class AsteroidsGame extends Game implements ContactListener
 		}
 		this.ship.render( batch );
 		batch.end();
+		
+		HUD.render( this );
 		
 		// this.renderDebug();
 	}
@@ -259,6 +256,8 @@ public class AsteroidsGame extends Game implements ContactListener
 			this.bullet.markForDestruction();
 			asteroids.remove( this.asteroid );
 			queueForDestruction( this.asteroid );
+			
+			score.addScore( this.asteroid );
 		}
 	}
 }

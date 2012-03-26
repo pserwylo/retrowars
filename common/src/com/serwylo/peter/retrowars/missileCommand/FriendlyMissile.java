@@ -4,7 +4,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.serwylo.peter.retrowars.SpriteManager;
+import com.serwylo.peter.retrowars.AssetManager;
+import com.serwylo.peter.retrowars.GameObject;
 import com.serwylo.peter.retrowars.collisions.ICollidable;
 
 /**
@@ -13,81 +14,72 @@ import com.serwylo.peter.retrowars.collisions.ICollidable;
  * probably wont exactly hit the target, I will just measure the distance between the
  * target and the missile. When the distance starts to get larger than its smallest value, 
  * it must be moving away from the point again. 
- * @author pete
- *
  */
-public class FriendlyMissile implements ICollidable
+public class FriendlyMissile extends GameObject
 {
+
+	public static final short CATEGORY_BIT = 8;
 	
-	public static final int SPEED = 150;
+	public static final float SPEED = 0.01f;
+	
+	private boolean isAlive = true;
 	
 	private static Sprite bulletSprite;
 	
-	private Vector2 position, velocity, target;
+	private Vector2 target;
 	
 	private float distanceToTargetSquared = Float.MAX_VALUE;
 	
-	private Rectangle boundingRect;
-	
 	public FriendlyMissile( Vector2 start, Vector2 target )
 	{
-		this.position = start.cpy();
-		
-		this.velocity = start.cpy().rotate( 180 ).add( target );
-		this.velocity.nor();
-		this.velocity.x *= SPEED;
-		this.velocity.y *= SPEED;
-		
 		this.target = target;
 		
 		if ( bulletSprite == null )
 		{
-			bulletSprite = SpriteManager.getBulletSprite();
+			bulletSprite = AssetManager.getBulletSprite();
 		}
 		
-		this.boundingRect = new Rectangle(
-			this.position.x,
-			this.position.y,
-			bulletSprite.getWidth(),
-			bulletSprite.getHeight());
+		this.setSprite( bulletSprite );
+	
+		Vector2 size = new Vector2( 0.1f, 0.1f );
+		
+		this.helpInit( size, start.cpy() );
+		
+		Vector2 impulse = start.cpy().rotate( 180 ).add( target );
+		impulse.nor();
+		impulse.x *= SPEED;
+		impulse.y *= SPEED;
+		this.b2Body.applyLinearImpulse( impulse, start );
+	}
+	
+	public boolean isAlive()
+	{
+		return this.isAlive;
 	}
 	
 	/**
 	 * Updates the position of the bullet
 	 * @param delta
 	 */
-	public boolean update( float delta )
-	{
-		this.position.x += this.velocity.x * delta;
-		this.position.y += this.velocity.y * delta;
-	
-		this.boundingRect.x = this.position.x;
-		this.boundingRect.y = this.position.y;
-		
-		float distSquared = this.position.dst2( this.target );
+	public void update( float delta )
+	{	
+		float distSquared = this.b2Body.getPosition().dst2( this.target );
 		if ( distSquared < this.distanceToTargetSquared )
 		{
 			// Still approaching the target...
 			this.distanceToTargetSquared = distSquared;
-			return true;
+			this.isAlive = true;
 		}
 		else
 		{
 			// Notify the game, so that it can replace me with an explosion.
-			return false;
+			this.isAlive = false;
 		}
 	}
 	
 	public void render( SpriteBatch batch )
 	{
-		bulletSprite.setPosition( this.position.x, this.position.y );
-		bulletSprite.draw( batch );
-	}
-
-	@Override
-	public Rectangle getBoundingRect() 
-	{
-		return this.boundingRect;
+		this.helpDrawSprite( batch );
 	}
 	
 }

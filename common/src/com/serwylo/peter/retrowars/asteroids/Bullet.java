@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.serwylo.peter.retrowars.Game;
 import com.serwylo.peter.retrowars.GameObject;
 import com.serwylo.peter.retrowars.GraphicsUtils;
-import com.serwylo.peter.retrowars.SpriteManager;
+import com.serwylo.peter.retrowars.AssetManager;
 
 public class Bullet extends GameObject
 {
@@ -49,7 +49,7 @@ public class Bullet extends GameObject
 	{
 		if ( bulletSprite == null )
 		{
-			bulletSprite = SpriteManager.getBulletSprite();
+			bulletSprite = AssetManager.getBulletSprite();
 		}
 		
 		this.sprite = bulletSprite;

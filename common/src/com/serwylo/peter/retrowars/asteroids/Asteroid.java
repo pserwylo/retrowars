@@ -1,20 +1,12 @@
 package com.serwylo.peter.retrowars.asteroids;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.AssetManager;
 import com.serwylo.peter.retrowars.GameObject;
 import com.serwylo.peter.retrowars.GraphicsUtils;
-import com.serwylo.peter.retrowars.SpriteManager;
-import com.serwylo.peter.retrowars.collisions.ICollidable;
 
 public class Asteroid extends GameObject
 {
@@ -67,7 +59,7 @@ public class Asteroid extends GameObject
 	{	
 		if ( asteroidSprites == null )
 		{
-			asteroidSprites = SpriteManager.getAsteroidSprites();
+			asteroidSprites = AssetManager.getAsteroidSprites();
 		}
 		
 		if ( size < 0 || size > SIZE_LARGE )
@@ -83,7 +75,7 @@ public class Asteroid extends GameObject
 		
 		CircleShape shape = new CircleShape();
 		shape.setRadius( diameter / 2 );
-		this.helpInit( new Vector2( diameter, diameter ), position, shape, Asteroid.CATEGORY_BIT );
+		this.helpInit( new Vector2( diameter, diameter ), position, shape, Asteroid.CATEGORY_BIT, (short)( Ship.CATEGORY_BIT | Bullet.CATEGORY_BIT ) );
 		this.b2Body.applyLinearImpulse( velocity, this.b2Body.getPosition() );
 
 	}

@@ -4,20 +4,15 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Frustum;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.serwylo.peter.retrowars.collisions.DelayedCollisionProcessor;
-import com.serwylo.peter.retrowars.collisions.ICollidable;
-import com.serwylo.peter.retrowars.collisions.QuadTree;
 import com.serwylo.peter.retrowars.scores.GameScore;
 
 public abstract class Game implements ApplicationListener
@@ -158,10 +153,13 @@ public abstract class Game implements ApplicationListener
 	protected void preUpdateGame( float deltaTime )
 	{
 		this.world.step( deltaTime, 8, 3 );
+		this.getScore().update( deltaTime );
 	}
 	
 	protected void postUpdateGame()
 	{
+		// We should execute these processors before destroying bodies, because they will often
+		// request bodies to be destroyed, and we cbf waiting until the next cycle to destroy them...
 		for ( DelayedCollisionProcessor processor : this.collisionsToProcess )
 		{
 			processor.process();
@@ -193,6 +191,18 @@ public abstract class Game implements ApplicationListener
 		gl.glClear( GL10.GL_COLOR_BUFFER_BIT );
 		this.camera.update();
         this.camera.apply( gl );
+	}
+	
+	/**
+	 * Creates a sprite batch and sets it up with the {@link camera}.
+	 * @return
+	 */
+	protected SpriteBatch createSpriteBatch()
+	{
+		SpriteBatch batch = new SpriteBatch();
+		batch.setProjectionMatrix( this.camera.projection );
+		batch.setTransformMatrix( this.camera.view );
+		return batch;
 	}
 	
 	/**
@@ -256,13 +266,9 @@ public abstract class Game implements ApplicationListener
 		}
 		
 		this.metresPerPixel = metres / pixels;
-		Gdx.app.log( "METRES_PER_PIXEL", this.metresPerPixel + "" );
 		this.camera.viewportWidth = w * this.metresPerPixel;
 		this.camera.viewportHeight = h * this.metresPerPixel;
 
-		Gdx.app.log( "SCREEN", "Size: (" + w + ", " + h + ")" );		
-		Gdx.app.log( "VIEWPORT", "Size: (" + this.camera.viewportWidth + ", " + this.camera.viewportHeight + ")" );
-		
 		this.worldSize.x = this.camera.viewportWidth;
 		this.worldSize.y = this.camera.viewportHeight;
 

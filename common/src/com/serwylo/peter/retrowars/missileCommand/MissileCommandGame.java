@@ -6,10 +6,22 @@ import java.util.LinkedList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.asteroids.Asteroid;
+import com.serwylo.peter.retrowars.asteroids.Bullet;
+import com.serwylo.peter.retrowars.asteroids.AsteroidsGame.AsteroidBulletCollision;
+import com.serwylo.peter.retrowars.collisions.DelayedCollisionProcessor;
+import com.serwylo.peter.retrowars.scores.GameScore;
 
 public class MissileCommandGame extends Game 
 {
@@ -21,6 +33,8 @@ public class MissileCommandGame extends Game
 	 */
 	private long nextFire;
 
+	private MissileCommandScore score = new MissileCommandScore();
+	
 	/**
 	 * This is kept as a minor convenience, so that when we are firing new enemy missiles,
 	 * we don't need to continually iterate over cities looking just for live ones.
@@ -31,18 +45,25 @@ public class MissileCommandGame extends Game
 	
 	private LinkedList<Missile> enemyMissiles = new LinkedList<Missile>();
 	private LinkedList<FriendlyMissile> friendlyMissiles = new LinkedList<FriendlyMissile>();
-	
-	@Override
-	public void create()
-	{
-		super.create();
 
+	/**
+	 * Place two towers (@) and four cities (#) appropriately
+	 * Here is a mock-up of what it should look like:
+	 *  
+	 *  |--@--#--#--@--#--#--@--|
+	 */
+	@Override
+	protected void init( int width, int height ) 
+	{
+		Gdx.input.setInputProcessor( this.inputProcessor );
+		this.world.setContactListener( this.contactListener );
+		this.updateCameraViewport( 32, 1 );
+		
 		this.cities = new ArrayList<City>( 4 );
 		this.aliveCities = new ArrayList<City>( 4 );
 		for ( int i = 0; i < 4; i ++ )
 		{
 			City city = new City( 0 );
-			this.stage.addActor( city );
 			this.cities.add( city );
 			this.aliveCities.add( city );
 		}
@@ -51,11 +72,39 @@ public class MissileCommandGame extends Game
 		for ( int i = 0; i < 3; i ++ )
 		{
 			Tower tower = new Tower( 0 );
-			this.stage.addActor( tower );
 			this.towers.add( tower );
 		}
+	
+		float spacing = this.getWorldWidth() / 8;
 		
+		// Tower 1 is at position 1
+		this.towers.get( 0 ).getB2Body().setTransform( new Vector2( spacing, 1.0f ), 0.0f );
+		
+		// City 1 is at position 2
+		this.cities.get( 0 ).getB2Body().setTransform( new Vector2( spacing * 2, 1.0f ), 0.0f );
+		
+		// City 2 is at position 3
+		this.cities.get( 1 ).getB2Body().setTransform( new Vector2( spacing * 3, 1.0f ), 0.0f );
+		
+		// Tower 1 is at position 4
+		this.towers.get( 1 ).getB2Body().setTransform( new Vector2( spacing * 4, 1.0f ), 0.0f );
+		
+		// City 3 is at position 5
+		this.cities.get( 2 ).getB2Body().setTransform( new Vector2( spacing * 5, 1.0f ), 0.0f );
+		
+		// City 4 is at position 6
+		this.cities.get( 3 ).getB2Body().setTransform( new Vector2( spacing * 6, 1.0f ), 0.0f );
+		
+		// Tower 1 is at position 7
+		this.towers.get( 2 ).getB2Body().setTransform( new Vector2( spacing * 7, 1.0f ), 0.0f );
+			
 		this.queueMissile();
+	}
+
+	@Override
+	public GameScore getScore() 
+	{
+		return this.score;
 	}
 	
 	/**
@@ -64,11 +113,9 @@ public class MissileCommandGame extends Game
 	 * update manually). After updating the missiles, check if they have reached their destination
 	 * (the city) and if so, let the city know about it.
 	 */
-	public void update()
+	@Override
+	protected void update( float delta )
 	{
-		float delta = Gdx.graphics.getDeltaTime();
-		this.stage.act( delta );
-		
 		// Is it time to fire another enemy missile down?
 		if ( System.currentTimeMillis() > this.nextFire )
 		{
@@ -81,11 +128,10 @@ public class MissileCommandGame extends Game
 		while ( enemyIt.hasNext() )
 		{
 			Missile missile = enemyIt.next();
-			boolean active = missile.update( delta );
-			if ( !active )
+			missile.update( delta );
+			if ( !missile.isAlive() )
 			{
 				enemyIt.remove();
-				this.cityHit( missile.getTarget() );
 			}
 		}
 
@@ -94,48 +140,10 @@ public class MissileCommandGame extends Game
 		while( it.hasNext() )
 		{
 			FriendlyMissile missile = it.next();
-			boolean active = missile.update( delta );
-			if ( !active )
+			missile.update( delta );
+			if ( !missile.isAlive() )
 			{
 				it.remove();
-			}
-		}
-		
-		Input input = Gdx.app.getInput();
-		
-		if ( input.justTouched() )
-		{
-			this.fireFriendlyMissile( new Vector2( input.getX(), Gdx.graphics.getHeight() - input.getY() ) );
-		}
-	
-	}
-	
-	/**
-	 * Called when an enemy missile reaches its destination.
-	 * Tells the city it has been hit.
-	 * Removes the city from list of aliveCities if it has just been killed. 
-	 * Adds some graphical and audio feedback.
-	 * @param city
-	 */
-	private void cityHit( City city )
-	{
-		boolean wasAlive = city.isAlive();
-		
-		city.hitByMissile();
-		
-		// If this was the missile which killed it (because you can have dead cities being hit
-		// by missiles)...
-		if ( wasAlive && !city.isAlive() )
-		{
-			int index = this.aliveCities.indexOf( city );
-			if ( index >= 0 )
-			{
-				this.aliveCities.remove( index );
-			}
-			
-			if ( this.aliveCities.size() == 0 )
-			{
-				this.gameOver();
 			}
 		}
 	}
@@ -159,7 +167,7 @@ public class MissileCommandGame extends Game
 		float closestDistance = Float.MAX_VALUE;
 		for ( Tower tower : this.towers )
 		{
-			float dist = tower.getPosition().dst2( target );
+			float dist = tower.getB2Body().getPosition().dst2( target );
 			if ( tower.readyToFire() && dist < closestDistance )
 			{
 				closestDistance = dist;
@@ -169,7 +177,7 @@ public class MissileCommandGame extends Game
 		
 		if ( closestTower != null )
 		{
-			Vector2 start = closestTower.getPosition();
+			Vector2 start = closestTower.getB2Body().getPosition();
 			FriendlyMissile missile = new FriendlyMissile( start, target );
 			this.friendlyMissiles.add( missile );
 			closestTower.fire();
@@ -184,9 +192,9 @@ public class MissileCommandGame extends Game
 	{
 		if ( this.aliveCities.size() > 0 )
 		{
-			int startX = (int)( Math.random() * Gdx.graphics.getWidth() );
+			int startX = (int)( Math.random() * this.getWorldWidth() );
 			int cityIndex = (int)( Math.random() * this.aliveCities.size() );
-			Missile missile = new Missile( new Vector2( startX, Gdx.graphics.getHeight() ), this.aliveCities.get( cityIndex ) );
+			Missile missile = new Missile( new Vector2( startX, this.getWorldWidth() ), this.aliveCities.get( cityIndex ) );
 			this.enemyMissiles.add( missile );
 		}
 	}
@@ -205,17 +213,23 @@ public class MissileCommandGame extends Game
 	 * The stage is responsible for rendering the cities, because they are actors in the scene graph.
 	 * The missiles need to be told to render here manually.
 	 */
+	@Override
 	public void render()
 	{
-		this.update();
-		
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear( GL10.GL_COLOR_BUFFER_BIT );
+		super.render();
 
-		this.stage.draw();
-		
-		SpriteBatch batch = new SpriteBatch();
+		SpriteBatch batch = this.createSpriteBatch();
 		batch.begin();
+
+		for ( City city : this.cities )
+		{
+			city.render( batch );
+		}
+
+		for ( Tower tower : this.towers )
+		{
+			tower.render( batch );
+		}
 		
 		for ( Missile missile : this.enemyMissiles )
 		{
@@ -229,54 +243,105 @@ public class MissileCommandGame extends Game
 		
 		batch.end();
 		
+		this.renderDebug();
 	}
 	
-	/**
-	 * Place two towers (@) and four cities (#) appropriately
-	 * Here is a mock-up of what it should look like:
-	 *  
-	 *  |--@--#--#--@--#--#--@--|
-	 * 
-	 */
-	@Override
-	public void resize( int width, int height )
+	private ContactListener contactListener = new ContactListener() 
 	{
-		super.resize( width, height );
 		
-		int spacing = width / 8;
+		@Override
+		public void preSolve( Contact contact, Manifold oldManifold ) { }
 		
-		// Tower 1 is at position 1
-		this.towers.get( 0 ).getPosition().x = spacing;
+		@Override
+		public void postSolve(Contact contact, ContactImpulse impulse) { }
 		
-		// City 1 is at position 2
-		this.cities.get( 0 ).getPosition().x = spacing * 2;
+		@Override
+		public void endContact(Contact contact) { }
 		
-		// City 2 is at position 3
-		this.cities.get( 1 ).getPosition().x = spacing * 3;
+		@Override
+		public void beginContact( Contact contact ) 
+		{ 
+			Missile missile = null;
+			Object a = contact.getFixtureA().getUserData();
+			Object b = contact.getFixtureB().getUserData();
+			Object other = null;
+			
+			if ( a instanceof Missile )
+			{
+				missile = (Missile)a;
+				other = b;
+			}
+			else if ( b instanceof Missile )
+			{
+				 missile = (Missile)b;
+				 other = a;
+			}
+			
+			if ( other instanceof City )
+			{
+				addCollisionProcessor( new MissileCityDelayedProcessor( missile, (City)other ) );
+			}
+		}
+	};
+	
+	private InputProcessor inputProcessor = new InputAdapter() 
+	{
 		
-		// Tower 1 is at position 4
-		this.towers.get( 1 ).getPosition().x = spacing * 4;
+		@Override
+		public boolean touchDown( int x, int y, int pointer, int button ) 
+		{
+			Vector3 pos = new Vector3( x, y, 0.0f );
+			camera.unproject( pos );
+			fireFriendlyMissile( new Vector2( pos.x, pos.y ) );
+			return true;
+		}
 		
-		// City 3 is at position 5
-		this.cities.get( 2 ).getPosition().x = spacing * 5;
-		
-		// City 4 is at position 6
-		this.cities.get( 3 ).getPosition().x = spacing * 6;
-		
-		// Tower 1 is at position 7
-		this.towers.get( 2 ).getPosition().x = spacing * 7;
-	}
+	};
 
-	@Override
-	protected void init(int width, int height) {
-		// TODO Auto-generated method stub
-		
-	}
+	/**
+	 * Created to deal with when an enemy missile reaches its destination.
+	 * Tells the city it has been hit.
+	 * Removes the city from list of aliveCities if it has just been killed. 
+	 * Adds some graphical and audio feedback.
+	 */	
+	private class MissileCityDelayedProcessor implements DelayedCollisionProcessor
+	{
 
-	@Override
-	protected void update(float deltaTime) {
-		// TODO Auto-generated method stub
+		private Missile missile;
+		private City city;
 		
-	}
+		public MissileCityDelayedProcessor( Missile missile, City city )
+		{
+			this.missile = missile;
+			this.city = city;
+		}
+		
 
+		@Override
+		public void process() 
+		{
+			Gdx.app.log( "HIT", "City, missile" );
+			this.missile.markForDestruction();
+			
+			boolean wasAlive = city.isAlive();
+			city.hitByMissile();
+			
+			// If this was the missile which killed it (because dead cities will still get hit
+			// by missiles)...
+			if ( wasAlive && !city.isAlive() )
+			{
+				int index = aliveCities.indexOf( city );
+				if ( index >= 0 )
+				{
+					aliveCities.remove( index );
+				}
+				
+				if ( aliveCities.size() == 0 )
+				{
+					gameOver();
+				}
+			}
+		}
+	};
+	
 }

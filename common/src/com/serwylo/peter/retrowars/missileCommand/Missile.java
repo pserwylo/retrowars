@@ -4,46 +4,46 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.serwylo.peter.retrowars.SpriteManager;
+import com.serwylo.peter.retrowars.AssetManager;
+import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.GameObject;
 import com.serwylo.peter.retrowars.asteroids.AsteroidsGame;
 import com.serwylo.peter.retrowars.collisions.ICollidable;
 
-public class Missile implements ICollidable
+public class Missile extends GameObject
 {
+
+	public static final short CATEGORY_BIT = 4;
 	
-	public static final int SPEED = 50;
+	public static final float SPEED = 0.03f;
 	
 	private static Sprite bulletSprite;
 	
-	private Vector2 position, velocity;
-	
 	private City target;
 	
-	private Rectangle boundingRect;
+	private boolean isAlive = true;
 	
 	public Missile( Vector2 start, City target )
 	{
-		this.position = start;
-		
-		this.velocity = start.cpy().rotate( 180 ).add( target.getPosition() );
-		this.velocity.nor();
-		this.velocity.x *= SPEED;
-		this.velocity.y *= SPEED;
-		
 		this.target = target;
 		
 		if ( bulletSprite == null )
 		{
-			bulletSprite = SpriteManager.getBulletSprite();
+			bulletSprite = AssetManager.getBulletSprite();
 		}
+		
+		this.sprite = bulletSprite;
 
-		this.boundingRect = new Rectangle(
-			this.position.x,
-			this.position.y,
-			bulletSprite.getWidth(),
-			bulletSprite.getHeight()
-		);
+		Vector2 position = start.cpy();
+		Vector2 size = new Vector2( 0.1f, 0.1f );
+		this.helpInit( size, position, Missile.CATEGORY_BIT, City.CATEGORY_BIT );
 
+		Vector2 impulse = start.cpy().rotate( 180 ).add( target.getB2Body().getPosition() );
+		impulse.nor();
+		impulse.x *= SPEED;
+		impulse.y *= SPEED;
+		
+		this.b2Body.applyLinearImpulse( impulse, position );
 	}
 	
 	/**
@@ -56,37 +56,39 @@ public class Missile implements ICollidable
 		return this.target;
 	}
 	
+	public boolean isAlive()
+	{
+		return this.isAlive;
+	}
+	
 	/**
 	 * Updates the position of the bullet
 	 * @param delta
 	 */
-	public boolean update( float delta )
+	public void update( float delta )
 	{
-		this.position.x += this.velocity.x * delta;
-		this.position.y += this.velocity.y * delta;
-
-		this.boundingRect.x = this.position.x;
-		this.boundingRect.x = this.position.y;
-				
-		boolean keep = ( this.position.y > this.target.getPosition().y );
-
-		if ( !keep )
+		// Box2D should deal with collisions of cities, but if, for some reason this doesn't
+		// hit a city and keeps moving, get rid of it when it goes off the screen...
+		if ( this.b2Body.getPosition().x <= 0.0f )
 		{
+			this.markForDestruction();
 		}
-		
-		return keep;
+	}
+	
+	/**
+	 * Sets the isAlive flag to false and asks the {@link Game} to remove the associated Box2D object
+	 * once the world simulation is done. Next time the {@link Game.update} method is called it will 
+	 * remove the because of the {@link isAlive} flag.
+	 */
+	public void markForDestruction()
+	{
+		this.isAlive = false;
+		Game.getInstance().queueForDestruction( this );
 	}
 	
 	public void render( SpriteBatch batch )
 	{
-		bulletSprite.setPosition( this.position.x, this.position.y );
-		bulletSprite.draw( batch );
-	}
-
-	@Override
-	public Rectangle getBoundingRect() 
-	{
-		return this.boundingRect;
+		this.helpDrawSprite( batch );
 	}
 	
 }

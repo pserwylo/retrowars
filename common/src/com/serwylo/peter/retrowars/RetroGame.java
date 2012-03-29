@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,7 +16,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.serwylo.peter.retrowars.collisions.DelayedPhysicsProcessor;
 import com.serwylo.peter.retrowars.scores.GameScore;
 
-public abstract class Game implements ApplicationListener
+public abstract class RetroGame implements Screen
 {
 
 	protected Box2DDebugRenderer debugRenderer;
@@ -90,7 +91,7 @@ public abstract class Game implements ApplicationListener
 	 */
 	protected OrthographicCamera camera;
 	
-	private static Game currentGameInstance;
+	private static RetroGame currentGameInstance;
 	
 	private ArrayList<Body> bodiesToDestroy = new ArrayList<Body>( 100 );
 	
@@ -99,24 +100,19 @@ public abstract class Game implements ApplicationListener
 	 * This is useful to get a hold of global objects such as the camera, or the Box2D world.
 	 * @return
 	 */
-	public static Game getInstance()
+	public static RetroGame getInstance()
 	{
-		return Game.currentGameInstance;
+		return RetroGame.currentGameInstance;
 	}
 	
-	public Game()
+	public RetroGame()
 	{
-		Game.currentGameInstance = this;
+		RetroGame.currentGameInstance = this;
 		this.debugRenderer = new Box2DDebugRenderer();
 	}
 	
 	public abstract GameScore getScore();
 	
-	@Override
-	public void create() 
-	{
-	}
-
 	@Override
 	public void dispose() 
 	{
@@ -180,11 +176,11 @@ public abstract class Game implements ApplicationListener
 	 * this method. 
 	 */
 	@Override
-	public void render()
+	public void render( float delta )
 	{
-		float deltaTime = Gdx.graphics.getDeltaTime();
-		this.preUpdateGame( deltaTime );
-		this.update( deltaTime );
+		Gdx.app.log( "APPLICATION LISTENER RENDER", "Here" );
+		this.preUpdateGame( delta );
+		this.update( delta );
 		this.postUpdateGame();
 		
 		GL10 gl = Gdx.graphics.getGL10();
@@ -284,6 +280,18 @@ public abstract class Game implements ApplicationListener
 	{
 		
 	}
+
+	@Override
+	public void show() 
+	{
+		
+	}
+
+	@Override
+	public void hide() 
+	{
+		
+	};
 
 	public void queueForDestruction( Body b2Body ) 
 	{

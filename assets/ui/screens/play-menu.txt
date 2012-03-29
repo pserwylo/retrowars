@@ -1,0 +1,7 @@
+debug
+* spacing:40 padding:0 align:center
+[asteroidsButton] width:400 height:80
+---
+[missileCommandButton] width:400 height:80
+---
+[backButton] width:300 height:60

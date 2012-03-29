@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.serwylo.peter.retrowars.AssetManager;
-import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.RetroGame;
 import com.serwylo.peter.retrowars.GameObject;
 import com.serwylo.peter.retrowars.asteroids.AsteroidsGame;
 import com.serwylo.peter.retrowars.collisions.ICollidable;
@@ -76,14 +76,14 @@ public class Missile extends GameObject
 	}
 	
 	/**
-	 * Sets the isAlive flag to false and asks the {@link Game} to remove the associated Box2D object
-	 * once the world simulation is done. Next time the {@link Game.update} method is called it will 
+	 * Sets the isAlive flag to false and asks the {@link RetroGame} to remove the associated Box2D object
+	 * once the world simulation is done. Next time the {@link RetroGame.update} method is called it will 
 	 * remove the because of the {@link isAlive} flag.
 	 */
 	public void markForDestruction()
 	{
 		this.isAlive = false;
-		Game.getInstance().queueForDestruction( this );
+		RetroGame.getInstance().queueForDestruction( this );
 	}
 	
 	public void render( SpriteBatch batch )

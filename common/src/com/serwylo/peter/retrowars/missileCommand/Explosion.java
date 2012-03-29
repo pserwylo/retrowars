@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.serwylo.peter.retrowars.AssetManager;
-import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.RetroGame;
 import com.serwylo.peter.retrowars.GameObject;
 
 public class Explosion extends GameObject
@@ -54,7 +54,7 @@ public class Explosion extends GameObject
 		if ( age > DURATION )
 		{
 			this.isAlive = false;
-			Game.getInstance().queueForDestruction( this );
+			RetroGame.getInstance().queueForDestruction( this );
 		}
 		
 		float a = (float)age / DURATION;

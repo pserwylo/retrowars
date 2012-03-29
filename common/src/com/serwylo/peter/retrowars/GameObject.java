@@ -135,7 +135,7 @@ public abstract class GameObject
 		b2BodyDef.position.x = position.x;
 		b2BodyDef.position.y = position.y;
 		b2BodyDef.type = BodyType.DynamicBody;
-		this.b2Body = Game.getInstance().getWorld().createBody( b2BodyDef );
+		this.b2Body = RetroGame.getInstance().getWorld().createBody( b2BodyDef );
 
 		if ( shape == null )
 		{

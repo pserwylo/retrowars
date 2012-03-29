@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.serwylo.peter.retrowars.AssetManager;
-import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.RetroGame;
 import com.serwylo.peter.retrowars.GameObject;
 import com.serwylo.peter.retrowars.collisions.ICollidable;
 
@@ -75,7 +75,7 @@ public class FriendlyMissile extends GameObject
 		else
 		{
 			// Notify the game, so that it can replace me with an explosion.
-			Game.getInstance().queueForDestruction( this );
+			RetroGame.getInstance().queueForDestruction( this );
 			this.isAlive = false;
 		}
 	}

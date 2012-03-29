@@ -13,12 +13,12 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.RetroGame;
 import com.serwylo.peter.retrowars.HUD;
 import com.serwylo.peter.retrowars.collisions.DelayedPhysicsProcessor;
 import com.serwylo.peter.retrowars.scores.GameScore;
 
-public class AsteroidsGame extends Game implements ContactListener
+public class AsteroidsGame extends RetroGame implements ContactListener
 {
 
 	// Input keys for desktop version. The Android version will use a virtual d-pad.
@@ -98,9 +98,9 @@ public class AsteroidsGame extends Game implements ContactListener
 	}
 	
 	@Override
-	public void render()
+	public void render( float delta )
 	{
-		super.render();
+		super.render( delta );
 
 		SpriteBatch batch = this.createSpriteBatch();
 		batch.begin();

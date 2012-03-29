@@ -48,17 +48,17 @@ public class GraphicsUtils
 		
 		if ( position.x < 0 )
 		{
-			position.x = Game.getInstance().getWorldWidth();
+			position.x = RetroGame.getInstance().getWorldWidth();
 		}
 		else if ( position.y < 0 )
 		{
-			position.y = Game.getInstance().getWorldHeight();
+			position.y = RetroGame.getInstance().getWorldHeight();
 		}
-		else if ( position.x > Game.getInstance().getWorldWidth() )
+		else if ( position.x > RetroGame.getInstance().getWorldWidth() )
 		{
 			position.x = 0;
 		}
-		else if ( position.y > Game.getInstance().getWorldHeight() )
+		else if ( position.y > RetroGame.getInstance().getWorldHeight() )
 		{
 			position.y = 0;
 		}
@@ -92,52 +92,52 @@ public class GraphicsUtils
 		// necessary. It will just result in the sprite being drawn off screen and not being
 		// visible...
 
-		boolean crossingTop = ( y + object.getHeight() > Game.getInstance().getWorldHeight() );
+		boolean crossingTop = ( y + object.getHeight() > RetroGame.getInstance().getWorldHeight() );
 		boolean crossingBottom = ( y - object.getHeight() < 0 );
 		
-		boolean crossingRight = ( x + object.getWidth() > Game.getInstance().getWorldWidth() );
+		boolean crossingRight = ( x + object.getWidth() > RetroGame.getInstance().getWorldWidth() );
 		boolean crossingLeft = ( x - object.getWidth() < 0 );
 		
 		// Does it cross the TOP of the screen?
 		if ( crossingTop )
 		{
-			object.helpDrawSprite( batch, new Vector2( x, y - Game.getInstance().getWorldHeight() ) );
+			object.helpDrawSprite( batch, new Vector2( x, y - RetroGame.getInstance().getWorldHeight() ) );
 
 			// Do we need to draw it in the opposite corner too?
 			if ( crossingLeft )
 			{
-				object.helpDrawSprite( batch, new Vector2( x + Game.getInstance().getWorldWidth(), y - Game.getInstance().getWorldHeight() ) );
+				object.helpDrawSprite( batch, new Vector2( x + RetroGame.getInstance().getWorldWidth(), y - RetroGame.getInstance().getWorldHeight() ) );
 			}
 			else if ( crossingRight )
 			{
-				object.helpDrawSprite( batch, new Vector2( x - Game.getInstance().getWorldWidth(), y - Game.getInstance().getWorldHeight() ) );
+				object.helpDrawSprite( batch, new Vector2( x - RetroGame.getInstance().getWorldWidth(), y - RetroGame.getInstance().getWorldHeight() ) );
 			}
 		}
 		// Does it cross the BOTTOM of the screen?
 		else if ( crossingBottom )
 		{
-			object.helpDrawSprite( batch, new Vector2( x, y + Game.getInstance().getWorldHeight() ) );
+			object.helpDrawSprite( batch, new Vector2( x, y + RetroGame.getInstance().getWorldHeight() ) );
 			
 			// Do we need to draw it in the opposite corner too?
 			if ( crossingLeft )
 			{
-				object.helpDrawSprite( batch, new Vector2( x + Game.getInstance().getWorldWidth(), y + Game.getInstance().getWorldHeight() ) );
+				object.helpDrawSprite( batch, new Vector2( x + RetroGame.getInstance().getWorldWidth(), y + RetroGame.getInstance().getWorldHeight() ) );
 			}
 			else if ( crossingRight )
 			{
-				object.helpDrawSprite( batch, new Vector2( x - Game.getInstance().getWorldWidth(), y + Game.getInstance().getWorldHeight() ) );
+				object.helpDrawSprite( batch, new Vector2( x - RetroGame.getInstance().getWorldWidth(), y + RetroGame.getInstance().getWorldHeight() ) );
 			}
 		}
 		
 		// Does it cross the RIGHT of the screen?
 		if ( crossingRight )
 		{
-			object.helpDrawSprite( batch, new Vector2( x - Game.getInstance().getWorldWidth(), y ) );
+			object.helpDrawSprite( batch, new Vector2( x - RetroGame.getInstance().getWorldWidth(), y ) );
 		}
 		// Does it cross the LEFT of the screen?
 		else if ( crossingLeft )
 		{
-			object.helpDrawSprite( batch, new Vector2( x + Game.getInstance().getWorldWidth(), y ) );
+			object.helpDrawSprite( batch, new Vector2( x + RetroGame.getInstance().getWorldWidth(), y ) );
 		}
 		
 	}

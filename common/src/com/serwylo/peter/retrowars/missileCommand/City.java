@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.serwylo.peter.retrowars.AssetManager;
-import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.RetroGame;
 import com.serwylo.peter.retrowars.GameObject;
 
 public class City extends GameObject

@@ -1,0 +1,5 @@
+debug
+* spacing:40 padding:0 align:center
+[playButton] width:400 height:80
+---
+[quitButton] width:300 height:60

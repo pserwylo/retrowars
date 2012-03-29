@@ -22,7 +22,7 @@ public class HUD
 
 	private static HUD instance;
 	
-	public static void render( Game game )
+	public static void render( RetroGame game )
 	{
 		if ( instance == null )
 		{
@@ -51,7 +51,7 @@ public class HUD
 
 	}
 	
-	protected void renderHud( Game game )
+	protected void renderHud( RetroGame game )
 	{
 		double scale = game.getMetresPerPixel();
 		

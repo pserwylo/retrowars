@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.RetroGame;
 import com.serwylo.peter.retrowars.GameObject;
 import com.serwylo.peter.retrowars.GraphicsUtils;
 import com.serwylo.peter.retrowars.AssetManager;
@@ -96,7 +96,7 @@ public class Bullet extends GameObject
 
 		if ( !this.isAlive )
 		{
-			Game.getInstance().queueForDestruction( this.b2Body );
+			RetroGame.getInstance().queueForDestruction( this.b2Body );
 		}
 	}
 	

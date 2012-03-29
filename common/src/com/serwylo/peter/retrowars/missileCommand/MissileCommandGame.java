@@ -16,7 +16,7 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.serwylo.peter.retrowars.Game;
+import com.serwylo.peter.retrowars.RetroGame;
 import com.serwylo.peter.retrowars.HUD;
 import com.serwylo.peter.retrowars.asteroids.Asteroid;
 import com.serwylo.peter.retrowars.asteroids.Bullet;
@@ -25,7 +25,7 @@ import com.serwylo.peter.retrowars.collisions.DelayedPhysicsProcessor;
 import com.serwylo.peter.retrowars.scores.GameScore;
 import com.serwylo.peter.retrowars.scores.ScoreItem;
 
-public class MissileCommandGame extends Game 
+public class MissileCommandGame extends RetroGame 
 {
 
 	public static final int TIME_BETWEEN_ATTACKS = 2000;
@@ -231,9 +231,9 @@ public class MissileCommandGame extends Game
 	 * The missiles need to be told to render here manually.
 	 */
 	@Override
-	public void render()
+	public void render( float delta )
 	{
-		super.render();
+		super.render( delta );
 
 		SpriteBatch batch = this.createSpriteBatch();
 		batch.begin();
@@ -406,6 +406,6 @@ public class MissileCommandGame extends Game
 				}
 			}
 		}
-	};
+	}
 	
 }
